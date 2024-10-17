@@ -8,27 +8,71 @@
 **自定义作文题目:** 输入作文题目或要求以确保评分的准确性。  
 **评分标准:** 根据任务要求，定义评分标准，如任务回应、连贯性、词汇多样性、语法准确性等。  
 **自动评分:** 基于大语言模型 API，自动批量为作文评分。  
+
 **Bulk Essay Input:** Place the essays that need to be graded into a single column in an Excel file, remove the header, and ensure that the first row contains content.  
 **Model Selection:** Choose the language model you want to use for grading.  
 **Custom Essay Prompt:** Input the essay prompt to ensure accurate grading.  
 **Grading Criteria:** Define grading standards such as task response, coherence, lexical resource, and grammatical accuracy.  
 **Automated Grading:** Automatically batch grade essays using a large language model API.  
 
-# 使用方法  
-### 1. 后端设置  
-  打开后端 Python 文件`server.py`，找到调用大语言模型 API 的代码部分`line：12`。
+# 程序/exe文件 使用方法 | Usage Instruction
+### 准备 Excel 文件：
+将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容。  
+保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。  
+选择你要使用的评分模型：
+max：性能好，但价格高。  
+plus：最推荐的选项，性价比高。  
+turbo：性能较差，价格较低。  
+
+### 导入文件：  
+将编辑好的 Excel 文件拖入程序指定的文件路径栏中，并输入作文所在的列数。  
+  
+### 填写作文题目和评分标准：  
+输入作文的题目和相应的评分标准（如任务回应、连贯性、词汇多样性、语法准确性等）。
+
+### 提交并评分：  
+点击“提交”按钮，程序将开始自动评分。稍作等待，系统将生成分数并输出结果。  
+
+# 配置方法 | Settings  
+### 1. 后端设置 | Backend Setting  
+  打开后端 Python 文件`server.py`，找到调用大语言模型 API 的代码部分`line：14`。
   将`sk-xxx`替换为你的通义千问API Key。  
-  `line12: api_key="sk-xxx", # Replace with your OpenAI API key`  
+  `line14: api_key="sk-xxx", # Replace with your OpenAI API key`  
+  端口设置在`line5: port_default = 5000  # Default port` ，除非您已使用该端口，否则无需修改。
+  如果想使用open AI的 API，请删除15行的base_url，更改10行的模型名称，并按照open AI的API说明更改48行的返回内容。  
 配置好后，运行后端程序。  
+  Open the backend Python file `server.py` and locate the section that calls the large language model API at `line: 14`.  
+  Replace `sk-xxx` with your Tongyi Qwen API Key.  
+  `line 14: api_key="sk-xxx", # Replace with your OpenAI API key`  
+  Port setting located at `line5: port_default = 5000  # Default port`, otherwise you had already use this port, do not have to change it.
+  If you need to use OpenAI's ChatGPT key, simply remove line 15 which sets the base_url. Additionally, make sure to change the model name to the appropriate one for your API. Also, update line 48 to modify the return content according to OpenAI's official documentation.  
+  After configuring, run the backend program.
 
-### 2. 前端设置
-打开前端程序，找到指向后端地址的部分，将该地址修改为你自己的后端服务器地址。  
+### 2. 前端设置 | Frontend Settings  
+打开前端程序，将`line14`处地址修改为你自己的后端服务器地址。  
+`serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"`  
+默认连接本地的5000端口，若后端除了加上了API key以外没有做任何修改，并且运行在本地服务器，则此处也无需修改。  
+Open the frontend program and modify the address at line 14 to point to your own backend server address.  
+`serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"`    
+By default, it connects to the local server on port 5000. If the backend has not been modified beyond adding the API key and is running on the local server, you do not need to change this.  
+  
+### 3. 打包成exe方法 | How to package into exe
+使用pip安装pyinstaller，`pip install pyinstaller`  
+运行`pip show pyinstaller`，打开输出内容显示的“Location”，  
+用文本编辑器（例如Windows自带的文本编辑器、vscode等）打开`GUIClient.spec`。  
+将Location后的字符串替换掉文件中8-18行的`YOUR FILE PATH`。  
+  
+若你的系统/目标系统**不是win-x64平台**，使用请打开该路径下的文件夹“tkinterdnd2”，再打开“tkdnd”。  
+在这个文件夹中可以看见多个系统版本，选择你电脑/目标电脑的版本（此处我选择`win-x64`）的文件夹打开。  
+将这里面的文件路径，替换掉文件中的8-18行的文件路径即可（文件数量不一定一样）。
+  
+Use pip to install PyInstaller: `pip install pyinstaller`  
+Then, run: `pip show pyinstaller`  
+In the output, find and open the "Location" shown using a text editor (e.g., Notepad, VS Code).  
+Open the file GUIClient.spec and replace the string in lines 8-18 that says YOUR FILE PATH with the path shown after "Location".  
+  
+If your system/target system is **not on the win-x64 platform**, go to the folder named "tkinterdnd2" in the Location path, then open the "tkdnd" folder.  
+In this folder, you'll see multiple system versions—choose the folder that matches your computer's/target computer's version (for example, I chose win-x64).  
+Replace the file paths in lines 8-18 of the .spec file with the corresponding file paths from the selected system version (note that the number of files may vary).    
 
-// 示例代码片段
-const backendUrl = "你的后端服务器地址";
-保存修改并运行前端程序。
-示例
-将需要评分的作文存入 Excel 文件的某一列。  
-拖动 Excel 文件到程序中。  
-选择评分模型、填写作文题目和评分标准。  
-开始自动评分，系统将生成分数并输出结果。  
+
