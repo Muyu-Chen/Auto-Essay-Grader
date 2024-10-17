@@ -16,6 +16,10 @@
 **Automated Grading:** Automatically batch grade essays using a large language model API.  
 
 # 使用方法 | Usage Instruction
+### 安装依赖库 | install dependencies  
+运行以下指令安装依赖项 | Run the following command to install all the dependencies  
+`pip install -r requirements.txt`
+
 ### 运行后端和前端 | Run Backend and Frontend Programs
 先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。
 First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
