@@ -11,7 +11,7 @@ import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 # please replace the following with your server address
-serverUrl="http://xx.xx.xx.xx:5000/chat" # 请将此处替换为你的服务器地址
+serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"
 
 
 # 获取Windows系统的DPI缩放比例
@@ -55,7 +55,7 @@ label_instructions = tk.Label(
 label_instructions.pack(pady=10)
 
 # 模型选择下拉栏
-label_model = tk.Label(window, text="选择模型(默认为turbo):")
+label_model = tk.Label(window, text="选择模型/choose a model（默认为turbo):")
 label_model.pack()
 
 model_var = tk.StringVar()
@@ -73,7 +73,7 @@ model_dropdown["values"] = (
 model_dropdown.pack(pady=5)
 
 # 文件名称输入框
-label_file_name = tk.Label(window, text="文件路径（把文件拖入此处）:")
+label_file_name = tk.Label(window, text="文件路径（把文件拖入此处）/file path(drop it):")
 label_file_name.pack()
 
 # 使用 tk.Text 并设置高度为 5 行
@@ -94,7 +94,7 @@ entry_file_name.drop_target_register(DND_FILES)  # 注册为文件拖放目标
 entry_file_name.dnd_bind("<<Drop>>", drop)  # 绑定拖放事件
 
 # 输入列数输入框
-label_sheet_count = tk.Label(window, text="输入第几个工作表，只输入数字即可，默认为1（若不知道这是什么，无需修改）")
+label_sheet_count = tk.Label(window, text="第几个工作表/sheet number，只输入数字，默认为1（若不知道这是什么，无需修改）")
 label_sheet_count.pack()
 
 entry_sheet_count = tk.Text(window, height=2, width=int(30 * scaling_factor))
@@ -102,14 +102,14 @@ entry_sheet_count.pack(pady=5)
 entry_sheet_count.insert( "1.0", "1")
 
 # 输入列数输入框
-label_column_count = tk.Label(window, text="输入作文对应的列数(大写，从A列开始)")
+label_column_count = tk.Label(window, text="输入作文对应的列数/column(大写，从A列开始)")
 label_column_count.pack()
 
 entry_column_count = tk.Text(window, height=2, width=int(30 * scaling_factor))
 entry_column_count.pack(pady=5)
 
 # 作文题目输入框（大文本框）
-label_essay_title = tk.Label(window, text="需要评分的作文题目")
+label_essay_title = tk.Label(window, text="需要评分的作文题目/essay prompt")
 label_essay_title.pack()
 
 text_essay_title = tk.Text(window, height=7, width=int(30 * scaling_factor))
@@ -121,7 +121,7 @@ text_essay_title.insert(
 
 
 # 评分标准输入框（大文本框）
-label_scoring_criteria = tk.Label(window, text="评分标准（默认如下，可修改）")
+label_scoring_criteria = tk.Label(window, text="评分标准/grading criteria（默认如下，可修改）")
 label_scoring_criteria.pack()
 
 text_scoring_criteria = tk.Text(window, height=9.5, width=int(30 * scaling_factor))
@@ -174,7 +174,7 @@ text_scoring_criteria.insert(
 )  # 设置默认值
 
 # 提交按钮
-submit_button = tk.Button(window, text="提交", state=tk.DISABLED)  # 默认禁用
+submit_button = tk.Button(window, text="提交/Submit", state=tk.DISABLED)  # 默认禁用
 
 
 # 当用户修改任何输入时启用按钮
