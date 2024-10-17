@@ -16,32 +16,43 @@
 **Automated Grading:** Automatically batch grade essays using a large language model API.  
 
 # 程序/exe文件 使用方法 | Usage Instruction
+### 运行后端和前端 | Run Backend and Frontend Programs
+先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。
+First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
+
 ### 准备 Excel 文件：
-将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容。  
-保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。  
-选择你要使用的评分模型：
-max：性能好，但价格高。  
-plus：最推荐的选项，性价比高。  
-turbo：性能较差，价格较低。  
+将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容（不需要删除其他列）。  
+保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。 
+Place essays in a single column (do not need delete other columns), remove the header, and save as .xls (or .xlsx, though not recommended).
 
-### 导入文件：  
+### 选择使用的评分模型 | Select a Model  
+max：性能好，但价格高 | High performance, expensive.  
+plus：最推荐的选项，性价比高 | Recommended.  
+turbo：性能较差，价格较低 | Low performance, cheaper.  
+
+### 导入文件 | Import the File    
 将编辑好的 Excel 文件拖入程序指定的文件路径栏中，并输入作文所在的列数。  
-  
-### 填写作文题目和评分标准：  
-输入作文的题目和相应的评分标准（如任务回应、连贯性、词汇多样性、语法准确性等）。
+Drag the Excel file into the program and enter the essay column number.  
 
-### 提交并评分：  
+### 填写作文题目和评分标准 | Enter Essay Prompt & Grading Criteria  
+输入作文的题目和相应的评分标准（如任务回应、连贯性、词汇多样性、语法准确性等）。
+Input the essay prompt and grading criteria.  
+
+### 提交并评分 | Submit  
 点击“提交”按钮，程序将开始自动评分。稍作等待，系统将生成分数并输出结果。  
+Click "提交"(means submit) and wait for the scores to be generated.  
 
 # 配置方法 | Settings  
 ### 1. 后端设置 | Backend Setting  
-  打开后端 Python 文件`server.py`，找到调用大语言模型 API 的代码部分`line：14`。
+  打开后端 Python 文件`server.py`，  
+  找到调用大语言模型 API 的代码部分`line：14`。
   将`sk-xxx`替换为你的通义千问API Key。  
   `line14: api_key="sk-xxx", # Replace with your OpenAI API key`  
   端口设置在`line5: port_default = 5000  # Default port` ，除非您已使用该端口，否则无需修改。
   如果想使用open AI的 API，请删除15行的base_url，更改10行的模型名称，并按照open AI的API说明更改48行的返回内容。  
 配置好后，运行后端程序。  
-  Open the backend Python file `server.py` and locate the section that calls the large language model API at `line: 14`.  
+  Open the backend Python file `server.py`,  
+  and locate the section that calls the large language model API at `line: 14`.  
   Replace `sk-xxx` with your Tongyi Qwen API Key.  
   `line 14: api_key="sk-xxx", # Replace with your OpenAI API key`  
   Port setting located at `line5: port_default = 5000  # Default port`, otherwise you had already use this port, do not have to change it.
