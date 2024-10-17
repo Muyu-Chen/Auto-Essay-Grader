@@ -15,7 +15,7 @@
 **Grading Criteria:** Define grading standards such as task response, coherence, lexical resource, and grammatical accuracy.  
 **Automated Grading:** Automatically batch grade essays using a large language model API.  
 
-# 程序/exe文件 使用方法 | Usage Instruction
+# 使用方法 | Usage Instruction
 ### 运行后端和前端 | Run Backend and Frontend Programs
 先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。
 First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
@@ -76,6 +76,7 @@ By default, it connects to the local server on port 5000. If the backend has not
 若你的系统/目标系统**不是win-x64平台**，使用请打开该路径下的文件夹“tkinterdnd2”，再打开“tkdnd”。  
 在这个文件夹中可以看见多个系统版本，选择你电脑/目标电脑的版本（此处我选择`win-x64`）的文件夹打开。  
 将这里面的文件路径，替换掉文件中的8-18行的文件路径即可（文件数量不一定一样）。
+然后运行`pyinstaller GUIClient.spec`即可。  
   
 Use pip to install PyInstaller: `pip install pyinstaller`  
 Then, run: `pip show pyinstaller`  
@@ -85,5 +86,6 @@ Open the file GUIClient.spec and replace the string in lines 8-18 that says YOUR
 If your system/target system is **not on the win-x64 platform**, go to the folder named "tkinterdnd2" in the Location path, then open the "tkdnd" folder.  
 In this folder, you'll see multiple system versions—choose the folder that matches your computer's/target computer's version (for example, I chose win-x64).  
 Replace the file paths in lines 8-18 of the .spec file with the corresponding file paths from the selected system version (note that the number of files may vary).    
+Finally, run `pyinstaller GUIClient.spec`.
 
 
