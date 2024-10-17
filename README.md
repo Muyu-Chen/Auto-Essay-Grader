@@ -15,21 +15,20 @@
 **Automated Grading:** Automatically batch grade essays using a large language model API.  
 
 # 使用方法  
-1. 后端设置  
+### 1. 后端设置  
   打开后端 Python 文件`server.py`，找到调用大语言模型 API 的代码部分`line：12`。
   将`sk-xxx`替换为你的通义千问API Key。  
-`line12: api_key="sk-xxx", # Replace with your OpenAI API key`
+  `line12: api_key="sk-xxx", # Replace with your OpenAI API key`  
+配置好后，运行后端程序。  
 
-配置好后，运行后端程序。
-2. 前端设置
-打开前端程序，找到指向后端地址的部分，将该地址修改为你自己的后端服务器地址。
-javascript
-复制代码
+### 2. 前端设置
+打开前端程序，找到指向后端地址的部分，将该地址修改为你自己的后端服务器地址。  
+
 // 示例代码片段
 const backendUrl = "你的后端服务器地址";
 保存修改并运行前端程序。
 示例
-将需要评分的作文存入 Excel 文件的某一列。
-拖动 Excel 文件到程序中。
-选择评分模型、填写作文题目和评分标准。
-开始自动评分，系统将生成分数并输出结果。
+将需要评分的作文存入 Excel 文件的某一列。  
+拖动 Excel 文件到程序中。  
+选择评分模型、填写作文题目和评分标准。  
+开始自动评分，系统将生成分数并输出结果。  
