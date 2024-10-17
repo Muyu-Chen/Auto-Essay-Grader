@@ -47,14 +47,14 @@ Click "提交"(means submit) and wait for the scores to be generated.
   打开后端 Python 文件`server.py`，  
   找到调用大语言模型 API 的代码部分`line：14`。
   将`sk-xxx`替换为你的通义千问API Key。  
-  `line14: api_key="sk-xxx", # Replace with your OpenAI API key`  
+  `line14: api_key="sk-xxx", # Replace with your API key`  
   端口设置在`line5: port_default = 5000  # Default port` ，除非您已使用该端口，否则无需修改。
   如果想使用open AI的 API，请删除15行的base_url，更改10行的模型名称，并按照open AI的API说明更改48行的返回内容。  
 配置好后，运行后端程序。  
   Open the backend Python file `server.py`,  
   and locate the section that calls the large language model API at `line: 14`.  
   Replace `sk-xxx` with your Tongyi Qwen API Key.  
-  `line 14: api_key="sk-xxx", # Replace with your OpenAI API key`  
+  `line 14: api_key="sk-xxx", # Replace with your API key`  
   Port setting located at `line5: port_default = 5000  # Default port`, otherwise you had already use this port, do not have to change it.
   If you need to use OpenAI's ChatGPT key, simply remove line 15 which sets the base_url. Additionally, make sure to change the model name to the appropriate one for your API. Also, update line 48 to modify the return content according to OpenAI's official documentation.  
   After configuring, run the backend program.
