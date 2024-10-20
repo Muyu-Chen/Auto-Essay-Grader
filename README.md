@@ -92,4 +92,33 @@ In this folder, you'll see multiple system versions—choose the folder that mat
 Replace the file paths in lines 8-18 of the .spec file with the corresponding file paths from the selected system version (note that the number of files may vary).    
 Finally, run `pyinstaller GUIClient.spec`.
 
+# Todo
+## 功能开发
+### 普通功能
+- [ ] 在每次用户提交操作后，统计使用的资源
+- [ ] 优化界面美观程度
+- [ ] 添加图标、图片或背景色等，改善视觉效果
+- [ ] 作文分段评估、结合原始方法（词汇、语法等）进行评分
+- [ ] 评分与评语分两列给出（给出用户选项）
+- [ ] 提供深色模式
+- [ ] 日志文件单独输出（而非控制台输出）
+- [ ] 批量文件处理
+- [ ] 在文件处理完成后直接显示统计图
+- [ ] 在处理完每一篇论文后自动保存（而不是最后一起写入文档）
+- [ ] 增加bug反馈按钮
+  
+### 商业化功能
+- [ ] 后端实现用户增删查改
+- [ ] 前端实现用户登录功能
+- [ ] 添加用户资料编辑界面
+- [ ] 前后端集成支付充值系统
+
+### 性能优化
+- [ ] 提升应用加载速度
+- [ ] Windows会显示“未响应”，但是实际软件正在后台运算，优化此情况
+- [ ] 减少内存占用
+- [ ] 减少存储空间占用
+
+### 其他
+- [ ] 添加用户协议文档
 
