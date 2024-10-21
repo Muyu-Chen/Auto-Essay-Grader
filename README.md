@@ -22,9 +22,9 @@
 
 ### 运行后端和前端 | Run Backend and Frontend Programs
 先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。
-在Linux系统上使用```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &```来保存日志
+在Linux系统上使用```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &```来保存日志。  
 First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
-use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to save the log  
+use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to save the log.  
 
 ### 准备 Excel 文件：
 将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容（不需要删除其他列）。  
