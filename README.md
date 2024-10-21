@@ -97,7 +97,7 @@ Finally, run `pyinstaller GUIClient.spec`.
 # Todo
 ## 功能开发
 ### 短期内计划实现功能  
-- [ ] 性能优化：使用electron技术或C+html/js/css部分重写客户端  
+- [ ] 性能优化：使用electron技术或WIN32 API重构客户端（即不再适配Mac OS）（Tips. 多久Macbook Air 16+512的价格比我两台Windows加起来价格便宜就可以准备适配了  
 - [ ] Windows会显示“未响应”，但是实际软件正在后台运算，通过多线程优化此情况  
   
 ### 普通功能
