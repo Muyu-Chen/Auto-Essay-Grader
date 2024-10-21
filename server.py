@@ -19,10 +19,17 @@ with app.app_context():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
+        model = "qwen-turbo-0919"  # default model
         data = request.json
         messages = data.get("messages")
         systemContent = data.get("systemContent")
         model_get = data.get("model")
+        if model_get is None or model_get == "":
+            model_set = model
+            print("no model set has been recieved, use default model: " + str(model_set))
+        else:
+            model_set = model_get
+            print("model get is: " + str(model_set))
 
         send_message = [
             {
@@ -44,7 +51,7 @@ def chat():
         def generate():
             if completion:
                 print(completion.model_dump_json())
-                print(model_get)
+                print("completed as above")
                 return completion.choices[0].message.content
 
         # print(completion.model_dump_json())
