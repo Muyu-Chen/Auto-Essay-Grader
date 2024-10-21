@@ -97,9 +97,9 @@ Finally, run `pyinstaller GUIClient.spec`.
 # Todo
 ## 功能开发
 ### 短期内计划实现功能  
- -[ ] 性能优化：使用electron技术或C+html/js/css部分重写客户端
- -[ ] Windows会显示“未响应”，但是实际软件正在后台运算，通过多线程优化此情况
-
+- [ ] 性能优化：使用electron技术或C+html/js/css部分重写客户端  
+- [ ] Windows会显示“未响应”，但是实际软件正在后台运算，通过多线程优化此情况  
+  
 ### 普通功能
 - [x] 后台日志输出保存为文件
 - [ ] 在每次用户提交操作后，统计使用的资源
