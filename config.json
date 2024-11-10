@@ -1,0 +1,13 @@
+{
+    "backend": {
+        "api-key":"sk-xxx"
+    },
+    "frontend": {
+        "serverAddress": "http://localhost:5000/chat",
+        "prompt_file_address": "criteria.txt",
+        "language": "zh",
+        "locale": "zh-CN",
+        "timezone": "Asia/Shanghai"
+    }
+
+}

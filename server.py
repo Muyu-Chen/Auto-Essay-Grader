@@ -9,9 +9,13 @@ CORS(app, origins="*")  # Allow all origins
 
 model = "qwen-turbo-0919" # default model
 
+with open('config.json', 'r') as file:
+    settings = json.load(file)
+api_key_get = config.get('backend', {}).get('api-key', 'api-key-error')
+
 with app.app_context():
     client = OpenAI(
-        api_key="sk-xxx", # Replace with your API key
+        api_key= api_key_get,
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
 

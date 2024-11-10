@@ -11,7 +11,16 @@ import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 # please replace the following with your server address
-serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"
+
+with open('config.json', 'r') as file:
+    settings = json.load(file)
+
+serverUrl = config.get('frontend', {}).get('serverAddress', 'http://localhost:5000/chat')
+prompt_file_address = config.get('frontend', {}).get('prompt_file_address', 'criteria.txt')
+language = config.get('frontend', {}).get('language', 'zh')
+
+with open(prompt_file_address, 'r') as file:
+    content = file.read()
 
 
 # 获取Windows系统的DPI缩放比例
@@ -128,49 +137,7 @@ text_scoring_criteria = tk.Text(window, height=9.5, width=int(30 * scaling_facto
 text_scoring_criteria.pack(pady=5)
 text_scoring_criteria.insert(
     "1.0",
-    """作文评分标准（0-9分，0.5分一档），对每项分别评分（互不影响地评分），
-并给出这四项的平均分作为作文的最终总分，四个部分的分数分开给出并分别给出简要点评：
-9分为英语母语者，英语文学硕士水平，6.5为中国大学生优秀水平，5.5-6为平均水平。
-任务回应：
-9：全面深入回应，观点明确。
-8：有效回应，表达清晰。
-7：全面回应，但有些不够深入。
-6：回应基本，但观点不明确。
-5：部分完整，未充分展开。
-4：回应有限，观点模糊。
-3：未有效回应，观点混乱。
-2：几乎没有回应，内容无关。
-1：没有回应，内容完全不相关。
-连贯与衔接：
-9：结构清晰，逻辑严谨。
-8：合理结构，信息流畅。
-7：逻辑清晰，但某些部分流畅性不足。
-6：基本结构合理，但存在组织问题。
-5：结构简单，缺乏衔接。
-4：缺乏连贯性，逻辑混乱。
-3：几乎没有连贯性，难以理解。
-2：没有结构，内容杂乱无章。
-1：完全没有连贯性，无法理解。
-词汇多样性：
-9：丰富且准确，表达能力强。
-8：词汇丰富，少量错误。
-7：使用得当，偶有不当或拼写错误。
-6：词汇有限，表达清晰但有拼写错误。
-5：词汇不足，常见拼写错误。
-4：使用不当，影响理解。
-3：非常有限，严重影响表达。
-2：几乎没有使用恰当词汇。
-1：无法使用词汇，无法理解。
-语法范围与准确性：
-9：准确使用，句子结构多样。
-8：良好，少量错误。
-7：较好，少量错误不影响理解。
-6：基本正确，常有错误影响表达。
-5：错误较多，影响理解。
-4：错误频繁，影响理解。
-3：几乎完全错误，难以理解。
-2：没有语法正确的句子。
-1：完全没有可识别的语法。""",
+    criteriaInFile,
 )  # 设置默认值
 
 # 提交按钮
@@ -226,7 +193,6 @@ def submit():
         submit_button.config(state=tk.NORMAL)
 
 
-# 示例主程序逻辑（你可以用自己的代码替换此部分）
 def process_essay(model, file_path, columns, title, criteria, sheet_number):
     if columns == "A" or columns == "1" or columns == "a":
         cols=[0]  # 假设你要读取第1列（A列）
