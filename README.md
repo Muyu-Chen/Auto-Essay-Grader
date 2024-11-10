@@ -50,10 +50,10 @@ Click "提交"(means submit) and wait for the scores to be generated.
 
 # 配置方法 | Settings  
 ### 1. 后端设置 | Backend Setting  
-  打开后端 Python 文件`server.py`，  
-  找到调用大语言模型 API 的代码部分`line：14`。
+# need to be changed (in progress)  
+  打开 文件`config.json`，  
   将`sk-xxx`替换为你的通义千问API Key。  
-  `line14: api_key="sk-xxx", # Replace with your API key`  
+  `"api-key": "sk-xxx", # Replace with your API key`  
   端口设置在`line5: port_default = 5000  # Default port` ，除非您已使用该端口，否则无需修改。
   如果想使用open AI的 API，请删除15行的base_url，更改10行的模型名称，并按照open AI的API说明更改48行的返回内容。  
 配置好后，运行后端程序。  

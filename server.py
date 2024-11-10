@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify, Response  # Ensure jsonify is imported
 from flask_cors import CORS
 from openai import OpenAI
-
-port_default = 5000  # Default port
-
-app = Flask(__name__)
-CORS(app, origins="*")  # Allow all origins
-
-model = "qwen-turbo-0919" # default model
+import json
 
 with open('config.json', 'r') as file:
     settings = json.load(file)
 api_key_get = config.get('backend', {}).get('api-key', 'api-key-error')
+port_default = config.get('backend', {}).get('port', '5000')  # Default port
+
+app = Flask(__name__)
+CORS(app, origins="*")  # Allow all origins
+
+model = "qwen-plus-0806" # default model
+
+
 
 with app.app_context():
     client = OpenAI(

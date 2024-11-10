@@ -1,13 +1,23 @@
 {
     "backend": {
-        "api-key":"sk-xxx"
+        "api-key": "sk-xxx",
+        "port": 5000
     },
     "frontend": {
-        "serverAddress": "http://localhost:5000/chat",
-        "prompt_file_address": "criteria.txt",
+        "serverAddress": "http://172.0.0.1",
+        "promptFileAddress": "criteria.txt",
+        "rulePlaySettings": "rulePlaySettings.txt",
         "language": "zh",
         "locale": "zh-CN",
-        "timezone": "Asia/Shanghai"
+        "timezone": "Asia/Shanghai",
+        "availableModels": [
+            "qwen-max",
+            "qwen-max-0919",
+            "qwen-plus",
+            "qwen-plus-latest",
+            "qwen-plus-0919",
+            "qwen-plus-0806",
+            "qwen-turbo"
+        ]
     }
-
 }

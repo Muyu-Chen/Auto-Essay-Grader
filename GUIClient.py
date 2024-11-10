@@ -15,13 +15,21 @@ from tkinterdnd2 import DND_FILES, TkinterDnD
 with open('config.json', 'r') as file:
     settings = json.load(file)
 
-serverUrl = config.get('frontend', {}).get('serverAddress', 'http://localhost:5000/chat')
-prompt_file_address = config.get('frontend', {}).get('prompt_file_address', 'criteria.txt')
-language = config.get('frontend', {}).get('language', 'zh')
+serverAddress = config.get('frontend', {}).get('serverAddress', 'http://localhost')
+port = config.get('backend', {}).get('port', '5000')
+serverUrl = "".join([serverAddress, ":", port, "/chat"])
+promptFileAddress = config.get('frontend', {}).get('prompt_file_address', 'criteria.txt')
+rulePlaySettingsAddress = config.get('frontend', {}).get('rulePlaySettings', 'rulePlaySettings.txt')
 
-with open(prompt_file_address, 'r') as file:
-    content = file.read()
+languageSetting = config.get('frontend', {}).get('language', 'zh')
+availableModels = config.get('frontend', {}).get('availableModels')
 
+
+
+with open(promptFileAddress, 'r') as file:
+    criteria = file.read()
+with open(rulePlaySettingsAddress, 'r') as file:
+    rulePlaySettings = file.read()
 
 # 获取Windows系统的DPI缩放比例
 def get_dpi_scaling():
@@ -50,6 +58,9 @@ window.geometry(geometry_str)
 window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
 # 说明文本
+with open('language.json', 'r') as file:
+    language = json.load(file)
+languageSetting
 instructions = """                                欢迎使用作文评分工具！
 1. 选择你要使用的模型：max性能好价格高，
    plus最推荐，turbo性能差价格低
@@ -69,16 +80,7 @@ label_model.pack()
 
 model_var = tk.StringVar()
 model_dropdown = ttk.Combobox(window, textvariable=model_var, state="readonly")
-model_dropdown["values"] = (
-    "qwen-max",
-    "qwen-max-0919",
-    "qwen-plus",
-    "qwen-plus-latest",
-    "qwen-plus-0919",
-    "qwen-plus-0806",
-    "qwen-turbo",
-    "qwen-turbo-0919",
-)  # 这里可以填写实际的模型名称
+model_dropdown["values"] = availableModels
 model_dropdown.pack(pady=5)
 
 # 文件名称输入框
@@ -169,8 +171,11 @@ def submit():
     column_count = entry_column_count.get("1.0", "end-1c")
     essay_title = text_essay_title.get("1.0", "end-1c")  # 获取大文本框内容
     scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
+    with open('criteria.txt', 'w') as file_write:
+        file_write.write(scoring_criteria)
 
-    # 模拟程序处理过程
+
+
     try:
         # 假设你要调用模型处理作文题目
         result = process_essay(
@@ -240,7 +245,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         cols=[14]
         pass
     sheet_number = int(sheet_number) - 1
-    systemContent = f"""你是一个资深的大学英语教师，有着四十余年的阅卷经验，根据以下作文的题目要求和评分标准，做出评分，分数不要过低但也不要过高，给出少量评语，但无需提供改进建议，不要对文章进行总结，以文本形式给出（不要有markdown标记），以“xx分（总分）：”开头：作文题目: {title}\n评分标准: {criteria}"""
+    systemContent = f"""{rulePlaySettings}题目: {title}\n评分标准: {criteria}"""
     df = pd.read_excel(file_path)
     def ToArray(file_path, cols, sheet_number):
         # 读取 Excel 文件，指定列和工作表名称
