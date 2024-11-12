@@ -49,7 +49,7 @@ def chat():
         ]
 
         completion = client.chat.completions.create(
-            model=model_get,
+            model=model_set,
             messages=send_message,
             stream=False,
         )
