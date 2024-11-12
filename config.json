@@ -1,7 +1,8 @@
 {
     "backend": {
         "api-key": "sk-xxxx",
-        "port": 5000
+        "port": 5000,
+        "model": "qwen-plus-0806"
     },
     "frontend": {
         "serverAddress": "http://127.0.0.1",
