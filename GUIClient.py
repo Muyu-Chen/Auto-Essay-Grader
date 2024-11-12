@@ -12,8 +12,18 @@ import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from language import * #import language variables
 
-with open('config.json', 'r') as file:
-    config = json.load(file)
+try:
+    with open('config.json', 'r') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("The config.json file was not found.")
+    config = {}
+except json.JSONDecodeError:
+    print("Error decoding JSON from the config.json file.")
+    config = {}
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+    config = {}
 
 serverAddress = config.get('frontend', {}).get('serverAddress', 'http://localhost')
 port = config.get('backend', {}).get('port', '5000')
@@ -25,10 +35,25 @@ languageSetting = config.get('frontend', {}).get('language', 'zh')
 availableModels = config.get('frontend', {}).get('availableModels')
 
 
-with open(promptFileAddress, 'r', encoding='utf-8') as file:
-    criteriaInFile = file.read()
-with open(rulePlaySettingsAddress, 'r', encoding='utf-8') as file:
-    rulePlaySettings = file.read()
+try:
+    with open(promptFileAddress, 'r', encoding='utf-8') as file:
+        criteriaInFile = file.read()
+except FileNotFoundError:
+    print(f"The file {promptFileAddress} was not found.")
+    criteriaInFile = ""
+except Exception as e:
+    print(f"An unexpected error occurred while reading {promptFileAddress}: {e}")
+    criteriaInFile = ""
+
+try:
+    with open(rulePlaySettingsAddress, 'r', encoding='utf-8') as file:
+        rulePlaySettings = file.read()
+except FileNotFoundError:
+    print(f"The file {rulePlaySettingsAddress} was not found.")
+    rulePlaySettings = ""
+except Exception as e:
+    print(f"An unexpected error occurred while reading {rulePlaySettingsAddress}: {e}")
+    rulePlaySettings = ""
 
 rulePlaySettings = (
     rulePlaySettings
@@ -70,10 +95,7 @@ window.geometry(geometry_str)
 # scaling_factor = get_dpi_scaling()
 window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
-# 说明文本
-with open("language.json", "r", encoding="utf-8") as file:
-    language = json.load(file)
-languageSetting
+# 说明文本（将要集合在language.py中）
 instructions = """                                欢迎使用作文评分工具！
 1. 选择你要使用的模型：max性能好价格高，
    plus最推荐，turbo性能差价格低
