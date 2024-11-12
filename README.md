@@ -129,3 +129,9 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [x] 拥有初始化应用程序，引导用户更改api-key等设置;
 - [x] 每30s自动保存文本框中的内容，保存于`criteria.txt`中;
 - [x] 初步将文本内容解耦，已建立文件，但目前还没有全部开发完成。
+
+# 免责声明
+`icon.ico` 文件是由阿里巴巴在 2024 年 10 月 16 日使用通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权归阿里巴巴所有，并遵循该公司规定。
+
+# Disclaimer
+The `icon.ico` file was generated using the Qwen large model by Alibaba on October 16, 2024. The author provided the necessary prompts for its creation. The copyright of this file belongs to Alibaba and is subject to the company's terms.
