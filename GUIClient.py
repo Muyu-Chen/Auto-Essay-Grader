@@ -7,17 +7,17 @@ import json
 import pandas as pd
 import numpy as np
 import os
+import openpyxl
 import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
-
-# please replace the following with your server address
+from language import * #import language variables
 
 with open('config.json', 'r') as file:
-    settings = json.load(file)
+    config = json.load(file)
 
 serverAddress = config.get('frontend', {}).get('serverAddress', 'http://localhost')
 port = config.get('backend', {}).get('port', '5000')
-serverUrl = "".join([serverAddress, ":", port, "/chat"])
+serverUrl = "".join([serverAddress, ":", str(port), "/chat"])
 promptFileAddress = config.get('frontend', {}).get('prompt_file_address', 'criteria.txt')
 rulePlaySettingsAddress = config.get('frontend', {}).get('rulePlaySettings', 'rulePlaySettings.txt')
 
@@ -25,12 +25,15 @@ languageSetting = config.get('frontend', {}).get('language', 'zh')
 availableModels = config.get('frontend', {}).get('availableModels')
 
 
-
-with open(promptFileAddress, 'r') as file:
-    criteria = file.read()
-with open(rulePlaySettingsAddress, 'r') as file:
+with open(promptFileAddress, 'r', encoding='utf-8') as file:
+    criteriaInFile = file.read()
+with open(rulePlaySettingsAddress, 'r', encoding='utf-8') as file:
     rulePlaySettings = file.read()
 
+rulePlaySettings = (
+    rulePlaySettings
+    + "要求以JSON格式输出，其中包含以下键：totalGrade、comment。不要包含任何其他内容。"
+)
 # 获取Windows系统的DPI缩放比例
 def get_dpi_scaling():
     user32 = ctypes.windll.user32
@@ -45,12 +48,22 @@ def get_dpi_scaling():
 # window = tk.Tk()
 window = TkinterDnD.Tk()  # 这个才支持拖入
 
+
+# 自动保存函数
+def auto_save():
+    scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
+    with open("criteria.txt", "w", encoding="utf-8") as file_write:
+        file_write.write(scoring_criteria)
+    # 每隔30s（30000毫秒）调用一次auto_save函数
+    window.after(30000, auto_save)
+
+
 window.title("英语作文评分工具")
 
 # 设置窗口大小
 scaling_factor = get_dpi_scaling()
 num1 = 600 * scaling_factor
-geometry_str = f"{int(num1)}x{int(num1*1.24)}"
+geometry_str = f"{int(num1)}x{int(num1*1.34)}"
 window.geometry(geometry_str)
 # window.tk.call("tk", "scaling", 2)  # 将缩放比例设置为2倍
 # 自动检测DPI并进行适配
@@ -58,7 +71,7 @@ window.geometry(geometry_str)
 window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
 # 说明文本
-with open('language.json', 'r') as file:
+with open("language.json", "r", encoding="utf-8") as file:
     language = json.load(file)
 languageSetting
 instructions = """                                欢迎使用作文评分工具！
@@ -87,8 +100,8 @@ model_dropdown.pack(pady=5)
 label_file_name = tk.Label(window, text="文件路径（把文件拖入此处）/file path(drop it):")
 label_file_name.pack()
 
-# 使用 tk.Text 并设置高度为 5 行
-entry_file_name = tk.Text(window, height=4, width=int(30 * scaling_factor))
+# 使用 tk.Text 并设置高度为 height 行
+entry_file_name = tk.Text(window, height=2.3, width=int(30 * scaling_factor))
 entry_file_name.pack(pady=5)
 
 
@@ -132,7 +145,7 @@ text_essay_title.insert(
 
 
 # 评分标准输入框（大文本框）
-label_scoring_criteria = tk.Label(window, text="评分标准/grading criteria（默认如下，可修改）")
+label_scoring_criteria = tk.Label(window, text=Tscoring_criteria)
 label_scoring_criteria.pack()
 
 text_scoring_criteria = tk.Text(window, height=9.5, width=int(30 * scaling_factor))
@@ -143,7 +156,7 @@ text_scoring_criteria.insert(
 )  # 设置默认值
 
 # 提交按钮
-submit_button = tk.Button(window, text="提交/Submit", state=tk.DISABLED)  # 默认禁用
+submit_button = tk.Button(window, text="提交", state=tk.DISABLED)  # 默认禁用
 
 
 # 当用户修改任何输入时启用按钮
@@ -171,10 +184,8 @@ def submit():
     column_count = entry_column_count.get("1.0", "end-1c")
     essay_title = text_essay_title.get("1.0", "end-1c")  # 获取大文本框内容
     scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
-    with open('criteria.txt', 'w') as file_write:
+    with open('criteria.txt', 'w', encoding='utf-8') as file_write:
         file_write.write(scoring_criteria)
-
-
 
     try:
         # 假设你要调用模型处理作文题目
@@ -246,6 +257,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         pass
     sheet_number = int(sheet_number) - 1
     systemContent = f"""{rulePlaySettings}题目: {title}\n评分标准: {criteria}"""
+
     df = pd.read_excel(file_path)
     def ToArray(file_path, cols, sheet_number):
         # 读取 Excel 文件，指定列和工作表名称
@@ -260,22 +272,29 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
     headers = {"Content-Type": "application/json"}
     responses = []  # 初始化一个空列表来存储响应
     for message in messages_list:
-        # print("Message:", message)
+        print("Message:", message)
         data = {"messages": message, "model": model, "systemContent": systemContent}
         response = requests.post(url, headers=headers, data=json.dumps(data))
-        response_content = (
-            response.content.decode("utf-8")
-            .replace("\n", "")
-            .replace("\r", "")
-            .replace(",", "，")
-        )
-        responses.append(response_content)
+
+        print(response)
+        response_content = response.content.decode("utf-8")
+        print(response_content)
+        response_content = response_content.replace("```json", "").replace("```", "").strip()
+        print(response_content)
+        response_data = json.loads(response_content)
+
+        grade = response_data.get("totalGrade")
+        comment = response_data.get("comment")
+        grade = str(grade).replace("\n", "").replace("\r", "").replace(",", "，")
+        comment = str(comment).replace("\n", "").replace("\r", "").replace(",", "，")
+        # 将评分和评论添加到列表中
+        responses.append(grade + ", " + comment)
         # 打印响应内容
-        print("Response content:", response_content)
+        print("Response content: " + grade + ", " + comment)
 
     input_directory = os.path.dirname(file_path)
     output_file_path = os.path.join(input_directory, "output.csv")
-    
+
     with open(output_file_path, "w", encoding="ANSI") as f:
         for response in responses:
             f.write(response + "\n")
@@ -289,5 +308,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
 submit_button.config(command=submit)
 submit_button.pack(pady=20)
 
+# 自动保存函数
+window.after(30000, auto_save)
 # 进入主循环
 window.mainloop()

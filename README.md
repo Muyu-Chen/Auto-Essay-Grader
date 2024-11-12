@@ -49,29 +49,16 @@ Input the essay prompt and grading criteria.
 Click "提交"(means submit) and wait for the scores to be generated.  
 
 # 配置方法 | Settings  
-### 1. 后端设置 | Backend Setting  
-# need to be changed (in progress)  
-  打开 文件`config.json`，  
-  将`sk-xxx`替换为你的通义千问API Key。  
-  `"api-key": "sk-xxx", # Replace with your API key`  
-  端口设置在`line5: port_default = 5000  # Default port` ，除非您已使用该端口，否则无需修改。
-  如果想使用open AI的 API，请删除15行的base_url，更改10行的模型名称，并按照open AI的API说明更改48行的返回内容。  
-配置好后，运行后端程序。  
-  Open the backend Python file `server.py`,  
-  and locate the section that calls the large language model API at `line: 14`.  
-  Replace `sk-xxx` with your Tongyi Qwen API Key.  
-  `line 14: api_key="sk-xxx", # Replace with your API key`  
-  Port setting located at `line5: port_default = 5000  # Default port`, otherwise you had already use this port, do not have to change it.
-  If you need to use OpenAI's ChatGPT key, simply remove line 15 which sets the base_url. Additionally, make sure to change the model name to the appropriate one for your API. Also, update line 48 to modify the return content according to OpenAI's official documentation.  
-  After configuring, run the backend program.
 
-### 2. 前端设置 | Frontend Settings  
-打开前端程序，将`line14`处地址修改为你自己的后端服务器地址。  
-`serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"`  
-默认连接本地的5000端口，若后端除了加上了API key以外没有做任何修改，并且运行在本地服务器，则此处也无需修改。  
-Open the frontend program and modify the address at line 14 to point to your own backend server address.  
-`serverUrl="http://localhost:5000/chat" # follow the format of "http://ip:port/chat"`    
-By default, it connects to the local server on port 5000. If the backend has not been modified beyond adding the API key and is running on the local server, you do not need to change this.  
+打开初始化程序`initialize_config.py`或`initialize_config.exe`，  
+按照指令，输入你的通义千问API Key、后端地址、端口等信息。若无需更改，直接按回车即可。  
+请注意，如果您对程序一窍不通，可以只输入API-key后，一直按回车即可。  
+配置好后，运行后端程序。  
+  
+Open the initialization program `initialize_config.py` or `initialize_config.exe`,  
+follow the instructions, and enter your Qianwen API-Key, backend address, port, and other information. If no changes are needed, simply press Enter.  
+Please note, if you are not familiar with the program, you can just enter the API key and keep pressing Enter.  
+After configuring, run the backend program.
   
 ### 3. 打包成exe方法 | How to package into exe
 使用pip安装pyinstaller，`pip install pyinstaller`  
@@ -97,6 +84,10 @@ Finally, run `pyinstaller GUIClient.spec`.
 # Todo
 ## 功能开发
 ### 短期内计划实现功能  
+- [x] 配置文件解耦，脱离主程序
+- [x] 拥有初始化应用程序，引导用户更改api-key等设置
+- [x] 每30s自动保存文本框中的内容 
+- [ ] 支持多语言选择
 - [ ] 性能优化：使用electron技术或WIN32 API重构客户端（即不再适配Mac OS）（Tips. 多久Macbook Air 16+512的价格比我两台Windows加起来价格便宜就可以准备适配了  
 - [ ] Windows会显示“未响应”，但是实际软件正在后台运算，通过多线程优化此情况  
   
@@ -130,3 +121,11 @@ Finally, run `pyinstaller GUIClient.spec`.
 ### 其他
 - [ ] 添加用户协议文档
 
+# 更新日志
+## Nov. 11, 2024
+- [x] 配置文件解耦，单独存于json文件中，脱离主程序;
+- [x] prompt解耦，单独存于txt文件中，使得程序的应用更广，可以通过更改`criteria.txt`，`rulePlaySettings.txt`来更改默认配置。不建议修改rulePlaySettings;
+- [x] 增加初始化程序，让用户一键运行;
+- [x] 拥有初始化应用程序，引导用户更改api-key等设置;
+- [x] 每30s自动保存文本框中的内容，保存于`criteria.txt`中;
+- [x] 初步将文本内容解耦，已建立文件，但目前还没有全部开发完成。

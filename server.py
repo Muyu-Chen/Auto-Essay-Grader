@@ -3,16 +3,15 @@ from flask_cors import CORS
 from openai import OpenAI
 import json
 
-with open('config.json', 'r') as file:
-    settings = json.load(file)
+with open('config.json', 'r', encoding='utf-8') as file:
+    config = json.load(file)
 api_key_get = config.get('backend', {}).get('api-key', 'api-key-error')
 port_default = config.get('backend', {}).get('port', '5000')  # Default port
 
 app = Flask(__name__)
 CORS(app, origins="*")  # Allow all origins
 
-model = "qwen-plus-0806" # default model
-
+model_default = "qwen-plus-0806" # default model
 
 
 with app.app_context():
@@ -25,7 +24,7 @@ with app.app_context():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        model = "qwen-turbo-0919"  # default model
+        model = model_default  # default model
         data = request.json
         messages = data.get("messages")
         systemContent = data.get("systemContent")

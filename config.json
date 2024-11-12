@@ -1,15 +1,14 @@
 {
     "backend": {
-        "api-key": "sk-xxx",
+        "api-key": "sk-xxxx",
         "port": 5000
     },
     "frontend": {
-        "serverAddress": "http://172.0.0.1",
+        "serverAddress": "http://127.0.0.1",
         "promptFileAddress": "criteria.txt",
         "rulePlaySettings": "rulePlaySettings.txt",
         "language": "zh",
         "locale": "zh-CN",
-        "timezone": "Asia/Shanghai",
         "availableModels": [
             "qwen-max",
             "qwen-max-0919",
