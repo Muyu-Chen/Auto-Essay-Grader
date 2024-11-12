@@ -121,17 +121,22 @@ Finally, run `pyinstaller GUIClient.spec`.
 ### 其他
 - [ ] 添加用户协议文档
 
-# 更新日志
+# 更新日志 | Update
 ## Nov. 11, 2024
 - [x] 配置文件解耦，单独存于json文件中，脱离主程序;
-- [x] prompt解耦，单独存于txt文件中，使得程序的应用更广，可以通过更改`criteria.txt`，`rulePlaySettings.txt`来更改默认配置。不建议修改rulePlaySettings;
+- [x] prompt解耦，单独存于txt文件中，使得程序的应用更广，可以通过更改`criteria.txt`，`rulePlaySettings.txt`来更改默认配置(不建议修改rulePlaySettings);
 - [x] 增加初始化程序，让用户一键运行;
 - [x] 拥有初始化应用程序，引导用户更改api-key等设置;
 - [x] 每30s自动保存文本框中的内容，保存于`criteria.txt`中;
 - [x] 初步将文本内容解耦，已建立文件，但目前还没有全部开发完成。
+### English Version
+- [x] Configuration files decoupled and stored in JSON files, separated from the main program.
+- [x] Prompts decoupled and stored in TXT files to make the program more versatile. Changes to `criteria.txt` and `rulePlaySettings.txt` can adjust default settings. Not recommended to change `rulePlaySettings`.
+- [x] Added an initialization program for one-click operation.
+- [x] Has an initialization app that guides users to change settings like API keys.
+- [x] Automatically saves text box content every 30 seconds into `criteria.txt`.
+- [x] Text content decoupling started; files created but not fully developed yet.
 
-# 免责声明
-`icon.ico` 文件是由阿里巴巴在 2024 年 10 月 16 日使用通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权归阿里巴巴所有，并遵循该公司规定。
-
-# Disclaimer
+# 免责声明 | Disclaimer
+`icon.ico` 文件是由阿里巴巴在 2024 年 10 月 16 日使用通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权归阿里巴巴所有，并遵循该公司规定。  
 The `icon.ico` file was generated using the Qwen large model by Alibaba on October 16, 2024. The author provided the necessary prompts for its creation. The copyright of this file belongs to Alibaba and is subject to the company's terms.
