@@ -41,7 +41,7 @@ use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to
 
 ### 准备 Excel 文件：
 将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容（不需要删除其他列）。  
-保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。 
+保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。   
 Place essays in a single column (do not need delete other columns), remove the header, and save as .xls (or .xlsx, though not recommended).
 
 ### 选择使用的评分模型 | Select a Model  
