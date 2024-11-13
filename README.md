@@ -18,12 +18,25 @@
 # 使用方法 | Usage Instruction
 ### 安装依赖库 | install dependencies  
 运行以下指令安装依赖项 | Run the following command to install all the dependencies  
-`pip install -r requirements.txt`
+`pip install -r requirements.txt`  
+
+### 配置 | Settings  
+打开初始化程序`initialize_config.py`或`initialize_config.exe`，  
+按照指令，输入你的通义千问API Key、后端地址、端口等信息。若无需更改，直接按回车即可。  
+请注意，如果您对程序一窍不通，可以只输入API-key后，一直按回车即可。  
+配置好后，运行后端程序。  
+  
+Open the initialization program `initialize_config.py` or `initialize_config.exe`,  
+follow the instructions, and enter your Qianwen API-Key, backend address, port, and other information. If no changes are needed, simply press Enter.  
+Please note, if you are not familiar with the program, you can just enter the API key and keep pressing Enter.  
+After configuring, run the backend program.  
 
 ### 运行后端和前端 | Run Backend and Frontend Programs
-先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。
+先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。  
+或依次运行`server.exe`和`GUIClient.exe`。  
 在Linux系统上使用```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &```来保存日志。  
 First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
+or run `server.exe` and `GUIClient.exe`.
 use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to save the log.  
 
 ### 准备 Excel 文件：
@@ -47,18 +60,6 @@ Input the essay prompt and grading criteria.
 ### 提交并评分 | Submit  
 点击“提交”按钮，程序将开始自动评分。稍作等待，系统将生成分数并输出结果。  
 Click "提交"(means submit) and wait for the scores to be generated.  
-
-# 配置方法 | Settings  
-
-打开初始化程序`initialize_config.py`或`initialize_config.exe`，  
-按照指令，输入你的通义千问API Key、后端地址、端口等信息。若无需更改，直接按回车即可。  
-请注意，如果您对程序一窍不通，可以只输入API-key后，一直按回车即可。  
-配置好后，运行后端程序。  
-  
-Open the initialization program `initialize_config.py` or `initialize_config.exe`,  
-follow the instructions, and enter your Qianwen API-Key, backend address, port, and other information. If no changes are needed, simply press Enter.  
-Please note, if you are not familiar with the program, you can just enter the API key and keep pressing Enter.  
-After configuring, run the backend program.
   
 ### 3. 打包成exe方法 | How to package into exe
 使用pip安装pyinstaller，`pip install pyinstaller`  
