@@ -139,5 +139,5 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [x] Text content decoupling started; files created but not fully developed yet.
 
 # 免责声明 | Disclaimer
-`icon.ico` 文件是在 2024 年 10 月 16 日使用阿里巴巴通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权归阿里巴巴所有，并遵循该公司规定。  
-The `icon.ico` file was generated using the Qwen large model by Alibaba on October 16, 2024. The author provided the necessary prompts for its creation. The copyright of this file belongs to Alibaba and is subject to the company's terms.
+`icon.ico` 文件是在 2024 年 10 月 16 日使用阿里巴巴通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权遵循该公司规定。  
+The `icon.ico` file was generated using the Qwen large model by Alibaba on October 16, 2024. The author provided the necessary prompts for its creation. The copyright of this file is subject to the company's terms.
