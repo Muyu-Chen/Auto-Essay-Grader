@@ -6,9 +6,9 @@ import json
 with open('config.json', 'r', encoding='utf-8') as file:
     config = json.load(file)
 api_key_get = config.get('backend', {}).get('api-key', 'api-key-error')
+api_key_get = str(api_key_get)
 port_default = config.get('backend', {}).get('port', '5000')  # Default port
 model_default = config.get('backend', {}).get('model', 'qwen-plus-0806')  # Default model
-
 app = Flask(__name__)
 CORS(app, origins="*")  # Allow all origins
 
@@ -17,7 +17,7 @@ CORS(app, origins="*")  # Allow all origins
 
 with app.app_context():
     client = OpenAI(
-        api_key= api_key_get,
+        api_key= api_key_get,            
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
 
