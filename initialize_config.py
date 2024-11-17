@@ -14,7 +14,7 @@ def initialize_config():
     config['backend']['api-key'] = get_user_input("Enter API key", config['backend']['api-key'])
     config['frontend']['language'] = get_user_input("Enter language(opt: en, zh)", config['frontend']['language'])
     config['backend']['port'] = int(get_user_input("Enter backend port", config['backend']['port']))
-    config['fontend']['width_default_value'] = get_user_input("Enter the width of input box", config['fontend']['width_default_value'])
+    config['frontend']['width_default_value'] = get_user_input("Enter the width of input box", config['fontend']['width_default_value'])
     config['frontend']['serverAddress'] = get_user_input("Enter server address", config['frontend']['serverAddress'])
     config['frontend']['promptFileAddress'] = get_user_input("Enter prompt file address", config['frontend']['promptFileAddress'])
     config['frontend']['rulePlaySettings'] = get_user_input("Enter rule play settings address", config['frontend']['rulePlaySettings'])
