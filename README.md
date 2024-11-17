@@ -88,7 +88,7 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [x] 配置文件解耦，脱离主程序
 - [x] 拥有初始化应用程序，引导用户更改api-key等设置
 - [x] 每30s自动保存文本框中的内容 
-- [ ] 支持多语言选择
+- [x] 支持多语言选择
 - [ ] 性能优化：使用electron技术或WIN32 API重构客户端（即不再适配Mac OS）（Tips. 多久Macbook Air 16+512的价格比我两台Windows加起来价格便宜就可以准备适配了  
 - [ ] Windows会显示“未响应”，但是实际软件正在后台运算，通过多线程优化此情况  
   
@@ -130,6 +130,11 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [x] 拥有初始化应用程序，引导用户更改api-key等设置;
 - [x] 每30s自动保存文本框中的内容，保存于`criteria.txt`中;
 - [x] 初步将文本内容解耦，已建立文件，但目前还没有全部开发完成。
+## Nov. 17, 2024  
+- [x] 多语言支持  
+- [x] 修复部分bug  
+- [x] 增加默认prompt使得生成内容的格式更加稳定，避免出现报错  
+      
 ### English Version
 - [x] Configuration files decoupled and stored in JSON files, separated from the main program.
 - [x] Prompts decoupled and stored in TXT files to make the program more versatile. Changes to `criteria.txt` and `rulePlaySettings.txt` can adjust default settings. Not recommended to change `rulePlaySettings`.
