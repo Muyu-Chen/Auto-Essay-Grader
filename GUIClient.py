@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import os
 import openpyxl
+import xlrd
 import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from language import * #import language variables
@@ -25,12 +26,13 @@ except Exception as e:
     print(f"An unexpected error occurred: {e}")
     config = {}
 
-serverAddress = config.get('frontend', {}).get('serverAddress', 'http://localhost')
+
+serverAddress = config.get("frontend", {}).get("serverAddress", "http://localhost")
 port = config.get('backend', {}).get('port', '5000')
 serverUrl = "".join([serverAddress, ":", str(port), "/chat"])
 promptFileAddress = config.get('frontend', {}).get('prompt_file_address', 'criteria.txt')
 rulePlaySettingsAddress = config.get('frontend', {}).get('rulePlaySettings', 'rulePlaySettings.txt')
-
+width_default_value = config.get('frontend', {}).get('width_default_value', 40)
 languageSetting = config.get('frontend', {}).get('language', 'zh')
 availableModels = config.get('frontend', {}).get('availableModels')
 
@@ -57,7 +59,7 @@ except Exception as e:
 
 rulePlaySettings = (
     rulePlaySettings
-    + "要求以JSON格式输出，其中包含以下键：totalGrade、comment。不要包含任何其他内容。"
+    + "要求以JSON格式输出，其中包含、且仅包含以下键：totalGrade、comment。不要包含任何其他内容。"
 )
 # 获取Windows系统的DPI缩放比例
 def get_dpi_scaling():
@@ -88,7 +90,7 @@ window.title("英语作文评分工具")
 # 设置窗口大小
 scaling_factor = get_dpi_scaling()
 num1 = 600 * scaling_factor
-geometry_str = f"{int(num1)}x{int(num1*1.34)}"
+geometry_str = f"{int(num1)}x{int(num1*1.3)}"
 window.geometry(geometry_str)
 # window.tk.call("tk", "scaling", 2)  # 将缩放比例设置为2倍
 # 自动检测DPI并进行适配
@@ -96,34 +98,27 @@ window.geometry(geometry_str)
 window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
 # 说明文本（将要集合在language.py中）
-instructions = """                                欢迎使用作文评分工具！
-1. 选择你要使用的模型：max性能好价格高，
-   plus最推荐，turbo性能差价格低
-2. 将表格中的表头删除，只保留作文内容，
-   然后保存为xls文件（xlsx也可以，但不建议）。
-2. 拖入文件到文件路径，并输入作文对应的列数。
-3. 填写作文题目及评分标准，然后点击提交（随后等待即可）。
-4. 开源地址：https://github.com/Muyu-Chen/Auto-Essay-Grader"""
+instructions = Tinstructions
 label_instructions = tk.Label(
     window, text=instructions, justify="left", wraplength=500 * scaling_factor
 )
 label_instructions.pack(pady=10)
 
 # 模型选择下拉栏
-label_model = tk.Label(window, text="选择模型/choose a model（默认为turbo):")
+label_model = tk.Label(window, text = TchoosingModel)
 label_model.pack()
 
 model_var = tk.StringVar()
-model_dropdown = ttk.Combobox(window, textvariable=model_var, state="readonly")
+model_dropdown = ttk.Combobox(window, textvariable = model_var, state="readonly")
 model_dropdown["values"] = availableModels
 model_dropdown.pack(pady=5)
 
 # 文件名称输入框
-label_file_name = tk.Label(window, text="文件路径（把文件拖入此处）/file path(drop it):")
+label_file_name = tk.Label(window, text = TfilePath)
 label_file_name.pack()
 
 # 使用 tk.Text 并设置高度为 height 行
-entry_file_name = tk.Text(window, height=2.3, width=int(30 * scaling_factor))
+entry_file_name = tk.Text(window, height=2.3, width=int(width_default_value * scaling_factor))
 entry_file_name.pack(pady=5)
 
 
@@ -139,30 +134,30 @@ def drop(event):
 entry_file_name.drop_target_register(DND_FILES)  # 注册为文件拖放目标
 entry_file_name.dnd_bind("<<Drop>>", drop)  # 绑定拖放事件
 
-# 输入列数输入框
-label_sheet_count = tk.Label(window, text="第几个工作表/sheet number，只输入数字，默认为1（若不知道这是什么，无需修改）")
+# 输入工作表数输入框
+label_sheet_count = tk.Label(window, text = TsheetNumber)
 label_sheet_count.pack()
 
-entry_sheet_count = tk.Text(window, height=2, width=int(30 * scaling_factor))
+entry_sheet_count = tk.Text(window, height=2, width=int(width_default_value * scaling_factor))
 entry_sheet_count.pack(pady=5)
 entry_sheet_count.insert( "1.0", "1")
 
 # 输入列数输入框
-label_column_count = tk.Label(window, text="输入作文对应的列数/column(大写，从A列开始)")
+label_column_count = tk.Label(window, text=TcolumnNumber)
 label_column_count.pack()
 
-entry_column_count = tk.Text(window, height=2, width=int(30 * scaling_factor))
+entry_column_count = tk.Text(window, height=2, width=int(width_default_value * scaling_factor))
 entry_column_count.pack(pady=5)
 
 # 作文题目输入框（大文本框）
-label_essay_title = tk.Label(window, text="需要评分的作文题目/essay prompt")
+label_essay_title = tk.Label(window, text=TessayTitle)
 label_essay_title.pack()
 
-text_essay_title = tk.Text(window, height=7, width=int(30 * scaling_factor))
+text_essay_title = tk.Text(window, height=4.5, width=int(width_default_value * scaling_factor))
 text_essay_title.pack(pady=5)
 text_essay_title.insert(
     "1.0",
-    """输入作文题目""",
+    TessayTitleExample,
 )
 
 
@@ -170,7 +165,7 @@ text_essay_title.insert(
 label_scoring_criteria = tk.Label(window, text=Tscoring_criteria)
 label_scoring_criteria.pack()
 
-text_scoring_criteria = tk.Text(window, height=9.5, width=int(30 * scaling_factor))
+text_scoring_criteria = tk.Text(window, height=9.5, width=int(width_default_value * scaling_factor))
 text_scoring_criteria.pack(pady=5)
 text_scoring_criteria.insert(
     "1.0",
@@ -178,7 +173,7 @@ text_scoring_criteria.insert(
 )  # 设置默认值
 
 # 提交按钮
-submit_button = tk.Button(window, text="提交", state=tk.DISABLED)  # 默认禁用
+submit_button = tk.Button(window, text=Tsubmit, state=tk.DISABLED)  # 默认禁用
 
 
 # 当用户修改任何输入时启用按钮
@@ -221,10 +216,10 @@ def submit():
         )
 
         # 显示处理结果
-        messagebox.showinfo("结果", f"处理成功。处理后的文件目录： {result}")
+        messagebox.showinfo("{Tresult}", f"{TresultContent}{result}")
 
     except Exception as e:
-        messagebox.showerror("错误", f"处理时出错: {str(e)}")
+        messagebox.showerror("{TresultError}", f"{TresultErrorReason}{str(e)}")
 
     finally:
         # 当处理完成后重新启用提交按钮（如果有内容变化的话）
@@ -278,7 +273,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         cols=[14]
         pass
     sheet_number = int(sheet_number) - 1
-    systemContent = f"""{rulePlaySettings}题目: {title}\n评分标准: {criteria}"""
+    systemContent = f"""{rulePlaySettings} 题目:“ {title}”\n评分标准: {criteria}"""
 
     df = pd.read_excel(file_path)
     def ToArray(file_path, cols, sheet_number):
@@ -311,8 +306,8 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         comment = str(comment).replace("\n", "").replace("\r", "").replace(",", "，")
         # 将评分和评论添加到列表中
         responses.append(grade + ", " + comment)
-        # 打印响应内容
-        print("Response content: " + grade + ", " + comment)
+        # 打印响应内容 这个因为不具有调试价值，所以只打印前50个字符
+        print("Response content: " + (grade + ", " + comment)[:50])
 
     input_directory = os.path.dirname(file_path)
     output_file_path = os.path.join(input_directory, "output.csv")
