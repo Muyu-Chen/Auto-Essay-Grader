@@ -14,7 +14,7 @@ from tkinterdnd2 import DND_FILES, TkinterDnD
 from language import * #import language variables
 
 try:
-    with open('config.json', 'r') as file:
+    with open('config.json', 'r', encoding='utf-8') as file:
         config = json.load(file)
 except FileNotFoundError:
     print("The config.json file was not found.")
