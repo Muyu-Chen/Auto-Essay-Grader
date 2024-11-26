@@ -1,7 +1,12 @@
 # 英语作文自动评分系统 | Auto-Essay-Grader
 **Auto Essay Grader** 是一个基于大语言模型 API 的自动评分工具。上传包含作文的 Excel 文件，其中作文在一列里，然后选择模型，提供作文题目和评分标准，工具就会自动批量生成分数和评语。  
 **Auto Essay Grader** is an automated tool for grading essays using language model APIs. Upload an Excel file with essays (in one column), select a model, provide the essay prompt and grading criteria, and the tool will automatically generate scores in bulk.
-![image](https://github.com/user-attachments/assets/e16b2c78-8a72-4504-9f2c-9fd981e6c295)
+<div align=center>
+<img src="https://github.com/user-attachments/assets/e16b2c78-8a72-4504-9f2c-9fd981e6c295" alt="Image 1" style="width: 32%; margin-right: 5%;  aligen: center">
+<img src="https://github.com/user-attachments/assets/a0348b50-6ad5-46b4-a08e-ff66dac8093a" alt="Image 2" style="width: 43%;  aligen: center">    
+<p>The left image is the GUI client, the right-side image is the server.</p>
+</div>
+</div>  
 
 
 ## 功能特性 | Features
