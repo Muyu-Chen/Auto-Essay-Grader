@@ -15,7 +15,7 @@
 **自定义作文题目:** 输入作文题目或要求以确保评分的准确性。  
 **评分标准:** 根据任务要求，定义评分标准，如任务回应、连贯性、词汇多样性、语法准确性等。  
 **自动评分:** 基于大语言模型 API，自动批量为作文评分。  
-
+  
 **Bulk Essay Input:** Place the essays that need to be graded into a single column in an Excel file, remove the header, and ensure that the first row contains content.  
 **Model Selection:** Choose the language model you want to use for grading.  
 **Custom Essay Prompt:** Input the essay prompt to ensure accurate grading.  
@@ -50,24 +50,24 @@ use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to
 将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容（不需要删除其他列）。  
 保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。   
 Place essays in a single column (do not need delete other columns), remove the header, and save as .xls (or .xlsx, though not recommended).
-
+  
 ### 选择使用的评分模型 | Select a Model  
 max：性能好，但价格高 | High performance, expensive.  
 plus：最推荐的选项，性价比高 | Recommended.  
 turbo：性能较差，价格较低 | Low performance, cheaper.  
-
+  
 ### 导入文件 | Import the File    
 将编辑好的 Excel 文件拖入程序指定的文件路径栏中，并输入作文所在的列数。  
 Drag the Excel file into the program and enter the essay column number.  
-
+  
 ### 填写作文题目和评分标准 | Enter Essay Prompt & Grading Criteria  
 输入作文的题目和相应的评分标准（如任务回应、连贯性、词汇多样性、语法准确性等）。
 Input the essay prompt and grading criteria.  
-
+  
 ### 提交并评分 | Submit  
 点击“提交”按钮，程序将开始自动评分。稍作等待，系统将生成分数并输出结果。  
 Click "提交"(means submit) and wait for the scores to be generated.  
-  
+   
 ### 3. 打包成exe方法 | How to package into exe
 使用pip安装pyinstaller，`pip install pyinstaller`  
 运行`pip show pyinstaller`，打开输出内容显示的“Location”，  
@@ -78,7 +78,7 @@ Click "提交"(means submit) and wait for the scores to be generated.
 在这个文件夹中可以看见多个系统版本，选择你电脑/目标电脑的版本（此处我选择`win-x64`）的文件夹打开。  
 将这里面的文件路径，替换掉文件中的8-18行的文件路径即可（文件数量不一定一样）。
 然后运行`pyinstaller GUIClient.spec`即可。  
-  
+    
 Use pip to install PyInstaller: `pip install pyinstaller`  
 Then, run: `pip show pyinstaller`  
 In the output, find and open the "Location" shown using a text editor (e.g., Notepad, VS Code).  
@@ -141,7 +141,7 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [x] 多语言支持  
 - [x] 修复部分bug  
 - [x] 增加默认prompt使得生成内容的格式更加稳定，避免出现报错  
-      
+        
 ### English Version
 - [x] Configuration files decoupled and stored in JSON files, separated from the main program.
 - [x] Prompts decoupled and stored in TXT files to make the program more versatile. Changes to `criteria.txt` and `rulePlaySettings.txt` can adjust default settings. Not recommended to change `rulePlaySettings`.
