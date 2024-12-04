@@ -1,4 +1,9 @@
+# This is a language file, which is used to store the language settings of the front end.
+# You can add your own language on the bottom of this file.
+# You can also modify the language settings in the config.json file.
+
 import json
+
 try:
     with open("config.json", "r") as file:
         config = json.load(file)
@@ -13,7 +18,11 @@ except Exception as e:
     config = {}
 language = config.get("frontend", {}).get("language", "zh")
 
+
+# Language settings, including English and Chinese.
 if language == "en":
+    # English
+    TTitle = "Auto Essay Grader"
     Tscoring_criteria = "Scoring criteria"
     Tinstructions = """                          Welcome to the essay grading tool!
     1. Choose the model: max: good performance, high price; 
@@ -27,7 +36,9 @@ if language == "en":
     TchoosingModel = "Choose the model (default is turbo):"
     TfilePath = "File path (drag the file here)"
     TsheetNumber = "Which sheet, enter a number (no need to modify if you don't know)"
-    TcolumnNumber = "The column number corresponding to the essay (uppercase, starting from A)"
+    TcolumnNumber = (
+        "The column number corresponding to the essay (uppercase, starting from A)"
+    )
     TessayTitle = "Essay writing requirements to be scored"
     TessayTitleExample = """Essay writing requirements to be scored, for example: If you are Li Hua, your art teacher takes you to the park for an art class, please write a letter to Chris, telling him what you did in the park and how you feel."""
     Tsubmit = "Submit"
@@ -39,7 +50,8 @@ if language == "en":
 
 elif language == "zh":
     # Chinese
-    Tscoring_criteria="评分标准"
+    TTitle = "作文评分工具"
+    Tscoring_criteria = "评分标准"
     Tinstructions = """                                欢迎使用作文评分工具！
     1. 选择你要使用的模型：max性能好价格高，
     plus最推荐，turbo性能差价格低
@@ -60,3 +72,11 @@ elif language == "zh":
     TresultContent = "处理成功。处理结果的文件保存在："
     TresultError = "错误"
     TresultErrorReason = "处理时出错："
+
+
+# if you want to add other languages, you can add them here.
+# e.g.:
+# elif language == "fr":
+#   # TTitle = "Outil de notation de dissertation"
+#   # Tscoring_criteria = "Critères de classement"
+#   # Tinstructions = ...

@@ -1,17 +1,19 @@
 import json
 
 def get_user_input(prompt, default):
-    user_input = input(f"{prompt} (default: {default}, enter -1 to keep default): ")
+    user_input = input(f"{prompt} (default: {default}, enter -1 or nothing to keep default): ")
     if user_input == "-1" or user_input.strip() == "":
         return default
     return user_input
 
 def initialize_config():
     # 从 config.json 文件中读取默认配置
+    # read default configuration from config.json
     with open('config.json', 'r', encoding='utf-8') as file:
         config = json.load(file)
 
     config['backend']['api-key'] = get_user_input("Enter API key", config['backend']['api-key'])
+    # if you want to add more language options prompt, you can add them below
     config['frontend']['language'] = get_user_input("Enter language(opt: en, zh)", config['frontend']['language'])
     config['backend']['port'] = int(get_user_input("Enter backend port", config['backend']['port']))
     config['frontend']['width_default_value'] = get_user_input("Enter the width of input box", config['fontend']['width_default_value'])
