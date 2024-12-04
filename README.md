@@ -41,7 +41,8 @@ After configuring, run the backend program.
 ### 运行后端和前端 | Run Backend and Frontend Programs
 先运行 `server.py` 启动后端服务，然后运行 `GUIClient.py` 启动前端界面。  
 或依次运行`server.exe`和`GUIClient.exe`。  
-在Linux系统上使用```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &```来保存日志。  
+在Linux系统上使用```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &```来保存日志。 
+  
 First, run `server.py` to start the backend service, and then run `GUIClient.py` to launch the frontend interface.  
 or run `server.exe` and `GUIClient.exe`.
 use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to save the log.  
@@ -49,12 +50,17 @@ use ```nohup python3 server.py > EssayJudgemmentOutput.log 2>&1 &``` on Linux to
 ### 准备 Excel 文件：
 将需要评分的作文内容存入 Excel 文件中的某一列，并确保删除表头，只保留作文内容（不需要删除其他列）。  
 保存文件为 .xls 格式（不建议使用 .xlsx 格式，但程序仍然可以运行）。   
+  
 Place essays in a single column (do not need delete other columns), remove the header, and save as .xls (or .xlsx, though not recommended).
   
 ### 选择使用的评分模型 | Select a Model  
-max：性能好，但价格高 | High performance, expensive.  
-plus：最推荐的选项，性价比高 | Recommended.  
-turbo：性能较差，价格较低 | Low performance, cheaper.  
+
+| 模型/Model  | 推荐                 | Recommend              |
+|:--------:|----------------------|------------------------|
+| max   | 性能优异，但价格高      | High performance, but expensive |
+| plus  | 最推荐的选项，性价比高 | Most recommended, great value |
+| turbo | 性能一般，价格较低    | Lower performance, more affordable |
+
   
 ### 导入文件 | Import the File    
 将编辑好的 Excel 文件拖入程序指定的文件路径栏中，并输入作文所在的列数。  
