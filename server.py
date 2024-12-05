@@ -10,9 +10,15 @@ api_key_get = str(api_key_get)
 port_default = config.get('backend', {}).get('port', '5000')  # Default port
 model_default = config.get('backend', {}).get('model', 'qwen-plus-0806')  # Default model
 app = Flask(__name__)
+
+# THIS IS NOT FOR SAFETY USE.
+# YOU SHOULD USE A WHITELIST TO CONTROL ACCESS.
 CORS(app, origins="*")  # Allow all origins
-
-
+# This allows cross-origin requests from any domain, suitable for development purposes.
+# Even if origins are restricted to trusted domains, non-browser clients (e.g., bots, scripts) 
+# can still access the server. CORS only controls browser-based cross-origin requests 
+# and does not prevent unauthorized or malicious access.
+# For better security, implement additional measures like authentication, IP restrictions, or rate limiting.
 
 
 with app.app_context():
