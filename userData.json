@@ -1,0 +1,25 @@
+{
+    "users": [
+        {
+            "UID": "12900001",
+            "userName": "MuYYY",
+            "userPassword": "abcdefg",
+            "creatingDate": "20241217",
+            "creatingTime": "120821",
+            "totalDeposit": 100000,
+            "totalUsed": 100,
+            "currentBalance": 99900
+        },
+        {
+            "UID": "1290002",
+            "userName": "5000",
+            "userPassword": "abcdefg",
+            "creatingDate": "20241217",
+            "creatingTime": "120821",
+            "totalDeposit": 100000,
+            "totalUsed": 100,
+            "currentBalance": 99900
+        }
+    ]
+
+}

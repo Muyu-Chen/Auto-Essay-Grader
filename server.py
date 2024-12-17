@@ -9,6 +9,7 @@ api_key_get = config.get('backend', {}).get('api-key', 'api-key-error')
 api_key_get = str(api_key_get)
 port_default = config.get('backend', {}).get('port', '5000')  # Default port
 model_default = config.get('backend', {}).get('model', 'qwen-plus-0806')  # Default model
+
 app = Flask(__name__)
 
 # THIS IS NOT FOR SAFETY USE.
@@ -31,43 +32,59 @@ with app.app_context():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        model = model_default  # default model
         data = request.json
-        messages = data.get("messages")
-        systemContent = data.get("systemContent")
-        model_get = data.get("model")
-        if model_get is None or model_get == "":
-            model_set = model
-            print("no model set has been recieved, use default model: " + str(model_set))
+        options = data.get("options")
+        if options == 1 or options == "1":
+            # addUser function
+            addUserFunc(data)
+        elif options == 2 or options == "2":
+            # update user's information
+            updateUserFunc(data)
+        elif options == 3 or options == "3":
+            # find user's information 
+            findUserFunc(data)
+        elif options == 4 or options == "4":
+            # Continue to access the model to get the answers
+            messages = data.get("messages")
+            systemContent = data.get("systemContent")
+            model_get = data.get("model")
+            if model_get is None or model_get == "":
+                model_set = model_default
+                print("no model set has been recieved, use default model: " + str(model_set))
+            else:
+                model_set = model_get
+                print("model get is: " + str(model_set))
+
+            send_message = [
+                {
+                    "role": "system",
+                    "content": systemContent,
+                },
+                {
+                    "role": "user",
+                    "content": messages,
+                },
+            ]
+
+            completion = client.chat.completions.create(
+                model=model_set,
+                messages=send_message,
+                stream=False,
+            )
+
+            def generate():
+                if completion:
+                    print(completion.model_dump_json())
+                    print("completed as above")
+                    return completion.choices[0].message.content
+
+            # print(completion.model_dump_json())
+            return Response(generate(), content_type="text/plain")
+        
+        elif options == 5 or options == "5":
+            print("add more function here")
         else:
-            model_set = model_get
-            print("model get is: " + str(model_set))
-
-        send_message = [
-            {
-                "role": "system",
-                "content": systemContent,
-            },
-            {
-                "role": "user",
-                "content": messages,
-            },
-        ]
-
-        completion = client.chat.completions.create(
-            model=model_set,
-            messages=send_message,
-            stream=False,
-        )
-
-        def generate():
-            if completion:
-                print(completion.model_dump_json())
-                print("completed as above")
-                return completion.choices[0].message.content
-
-        # print(completion.model_dump_json())
-        return Response(generate(), content_type="text/plain")
+            print("no matched options")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

@@ -1,9 +1,4 @@
 {
-    "backend": {
-        "api-key": "sk-xxxx",
-        "port": 5000,
-        "model": "qwen-plus-0806"
-    },
     "frontend": {
         "serverAddress": "http://127.0.0.1",
         "promptFileAddress": "criteria.txt",
@@ -19,5 +14,10 @@
             "qwen-plus-0806",
             "qwen-turbo"
         ]
+    },
+    "backend": {
+        "api-key": "sk-xxxx",
+        "port": 5000,
+        "model": "qwen-plus-0806"
     }
 }

@@ -59,7 +59,7 @@ except Exception as e:
 
 rulePlaySettings = (
     rulePlaySettings
-    + "要求以JSON格式输出，其中包含、且仅包含以下键：totalGrade、comment。不要包含任何其他内容。"
+    + "要求以JSON格式输出，即使前文有其他格式要求也无需理会，其中包含、且仅包含以下键：totalGrade、comment。不要包含任何其他内容。"
 )
 # 获取Windows系统的DPI缩放比例
 def get_dpi_scaling():
@@ -287,10 +287,11 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
     messages_list = ToArray(file_path, cols, sheet_number)
     url = serverUrl  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
+    chatWithAI = "4"
     responses = []  # 初始化一个空列表来存储响应
     for message in messages_list:
         print("Message:", message)
-        data = {"messages": message, "model": model, "systemContent": systemContent}
+        data = {"options": chatWithAI, "messages": message, "model": model, "systemContent": systemContent}
         response = requests.post(url, headers=headers, data=json.dumps(data))
 
         print(response)
