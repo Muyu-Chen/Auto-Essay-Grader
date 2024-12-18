@@ -2,6 +2,7 @@
     "users": [
         {
             "UID": "12900001",
+            "userPhone": "18012341234",
             "userName": "MuYYY",
             "userPassword": "abcdefg",
             "creatingDate": "20241217",
@@ -12,6 +13,7 @@
         },
         {
             "UID": "1290002",
+            "userPhone": "18012342234",
             "userName": "5000",
             "userPassword": "abcdefg",
             "creatingDate": "20241217",
@@ -21,5 +23,4 @@
             "currentBalance": 99900
         }
     ]
-
 }
