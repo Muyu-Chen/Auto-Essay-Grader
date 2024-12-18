@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, Response  # Ensure jsonify is importe
 from flask_cors import CORS
 from openai import OpenAI
 import json
+from modifyUsers import modifyUserFunc
 
 with open('config.json', 'r', encoding='utf-8') as file:
     config = json.load(file)
@@ -36,14 +37,8 @@ def chat():
         options = data.get("options")
         if options == 1 or options == "1":
             # addUser function
-            addUserFunc(data)
+            modifyUserFunc(data)
         elif options == 2 or options == "2":
-            # update user's information
-            updateUserFunc(data)
-        elif options == 3 or options == "3":
-            # find user's information 
-            findUserFunc(data)
-        elif options == 4 or options == "4":
             # Continue to access the model to get the answers
             messages = data.get("messages")
             systemContent = data.get("systemContent")

@@ -13,7 +13,11 @@
             "qwen-plus-0919",
             "qwen-plus-0806",
             "qwen-turbo"
-        ]
+        ],
+        "userName": "MuYYY",
+        "userPhone": "18012341234",
+        "userPassword": "abcdefg",
+        "UID": "12900001"
     },
     "backend": {
         "api-key": "sk-xxxx",

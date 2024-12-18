@@ -2,8 +2,8 @@
     "users": [
         {
             "UID": "12900001",
-            "userPhone": "18012341234",
             "userName": "MuYYY",
+            "userPhone": "18012341234",
             "userPassword": "abcdefg",
             "creatingDate": "20241217",
             "creatingTime": "120821",
@@ -13,8 +13,8 @@
         },
         {
             "UID": "1290002",
-            "userPhone": "18012342234",
             "userName": "5000",
+            "userPhone": "18012342234",
             "userPassword": "abcdefg",
             "creatingDate": "20241217",
             "creatingTime": "120821",
