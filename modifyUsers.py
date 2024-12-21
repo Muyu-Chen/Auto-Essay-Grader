@@ -27,17 +27,25 @@ with open("userData.json", "r", encoding="utf-8") as file:
 #       "UID": "12900001",
 
 
-# interface
-def modifyUserFunc(data):
-    todo = data.get("todo")
+# interface begin at here
+def modifyUserFunc(dataFromWeb):
+    todo = dataFromWeb.get("todo")
+    # "todo" means the operation that the user wants to do
+
     if todo == None:
         return -1
+
+    # because addUser do not need UID,
+    # so we do not need to check UID here
     elif todo == "addUser":
-        addUserFunc(data)
+        addUserFunc(dataFromWeb)
         return 0
-    UID = data.get("UID")
+
+    # if UID is none but userPhone is not none,
+    # we can get UID by userPhone
+    UID = dataFromWeb.get("UID")
     if UID == None:
-        userPhone = data.get("userPhone")
+        userPhone = dataFromWeb.get("userPhone")
         if userPhone == None or userPhone == "":
             return -1
         else:
@@ -45,25 +53,28 @@ def modifyUserFunc(data):
             if UID == None:
                 return -1
             else:
-                data["UID"] = UID
+                dataFromWeb["UID"] = UID
 
+    # interface
     elif todo == "updateUser":
-        updateUserFunc(data)
+        updateUserFunc(dataFromWeb)
         return 0
     elif todo == "findUser":
-        findUserFunc(data)
+        findUserFunc(dataFromWeb)
         return 0
     elif todo == "rechargeAccount":
-        rechargeAccount(data)
-        return 0
+        # -1: negative balance; other number: balance
+        return rechargeAccount(dataFromWeb)
     elif todo == "addUsage":
-        return addUsage(data)
-        # -1: negative balance; 1: lower than 500; 0: balance is enough
+        # -1: negative balance; other number: balance
+        # this would not get from web, but from the server
+        # but we will use the same data structure
+        return addUsage(dataFromWeb)
     elif todo == "updateCurrentBalance":
-        updateCurrentBalance(data)
+        updateCurrentBalance(dataFromWeb)
         return 0
     elif todo == "isAuthored":
-        isAuthored(data)
+        isAuthored(dataFromWeb)
         return 0
     else:
         return -1
@@ -71,30 +82,30 @@ def modifyUserFunc(data):
 
 ###
 # second level interfaces
-def addUserFunc(data):
+def addUserFunc(dataFromWeb):
     print("Now is in addUserFunc")
-    createUser(data)
+    createUser(dataFromWeb)
 
 
-def updateUserFunc(data):
+def updateUserFunc(dataFromWeb):
     print("Now is in updateUserFunc")
-    UID = data.get("UID")
-    field = data.get("field")
-    newValue = data.get("newValue")
+    UID = dataFromWeb.get("UID")
+    field = dataFromWeb.get("field")
+    newValue = dataFromWeb.get("newValue")
     try:
         setUserInfo(UID, field, newValue)
     except UserNotFoundException as e:
-        print(e)  # 打印用户未找到的错误信息
+        print(e)  # Print user not found error message
         return "eroor: no such user"
     except FieldNotFoundException as e:
-        print(e)  # 打印字段未找到的错误信息
+        print(e)  # Print field not found error message
         return "error: no such field"
 
 
-def findUserFunc(data):
+def findUserFunc(dataFromWeb):
     print("Now is in findUserFunc")
-    UID = data.get("UID")
-    field = data.get("field")
+    UID = dataFromWeb.get("UID")
+    field = dataFromWeb.get("field")
     userInfo = getUserInfo(UID, field)
     return userInfo
 
@@ -103,16 +114,21 @@ def findUserFunc(data):
 ###########
 
 
-def createUser(data):
+def createUser(dataFromWeb, deposit = 0):
+    # deposit is optional, default is 0
+    # if we want to give an initial amount,
+    # we can set deposit to a positive number
+    if deposit < 0:
+        return -1
     print("Now is in addUserFunction")
-    userName = data.get("userName")
-    userPhone = data.get("userPhone")
-    userPassword = data.get("userPassword")
+    userName = dataFromWeb.get("userName")
+    userPhone = dataFromWeb.get("userPhone")
+    userPassword = dataFromWeb.get("userPassword")
     current_time = datetime.now()
     creating_date = current_time.strftime("%Y%m%d")  # "20241217"
     creating_time = current_time.strftime("%H%M%S")  # "120821"
-    userPassword = hashPassword(userPassword, creating_date, creating_time)
-    # 遍历找最大的 UID
+    userHashedPassword = hashPassword(userPassword, creating_date, creating_time)
+    # find the largest UID
     max_uid = 0
     for user in userData["users"]:
         try:
@@ -124,17 +140,21 @@ def createUser(data):
         "UID": new_uid,
         "userName": userName,
         "userPhone": userPhone,
-        "userPassword": userPassword,
+        "userPassword": userHashedPassword,
         "creatingDate": creating_date,
         "creatingTime": creating_time,
-        "totalDeposit": 0,
+        "totalDeposit": int(deposit),
         "totalUsed": 0,
-        "currentBalance": 0,
+        "currentBalance": int(deposit),
     }
     userData["users"].append(new_user)
     with open("userData.json", "w", encoding="utf-8") as file:
         json.dump(userData, file, ensure_ascii=False, indent=4)
-    print(f"New user {userName} created successfully, UID is {new_uid}.")
+    
+    # Note: Printing passwords is a security risk!!!
+    # Avoid doing this in production.
+    # print the new user information
+    print(f"New user {userName} created successfully, UID is {new_uid}. Password is {userPassword}")
     return new_user
 
 
@@ -144,9 +164,10 @@ def rechargeAccount(data):
     UID = str(UID)
     totalDeposite = getUserInfo(UID, "totalDeposite") + addNum
     setUserInfo(UID, "totalDeposite", totalDeposite)
-    updateCurrentBalance(UID)
-    # totalUsed = getUserInfo(UID, "totalUsed")
-    # currentBalance = getUserInfo(UID, "currentBalance")
+    currentBalance = updateCurrentBalance(UID)
+    if currentBalance <= 0:
+        return -1
+    return currentBalance
 
 
 def addUsage(data, addNum):
@@ -156,10 +177,8 @@ def addUsage(data, addNum):
     remaining = updateCurrentBalance(UID)
     if remaining <= 0:
         return -1
-    elif remaining < 500:
-        return 1
     else:
-        return 0
+        return remaining
 
 def updateCurrentBalance(UID):
     UID = str(UID)
@@ -177,13 +196,13 @@ def getUserInfoByPhone(userPhone):
     return None
 
 
-def isAuthored(data):
-    UID = data.get("UID")
+def isAuthored(dataFromWeb):
+    UID = dataFromWeb.get("UID")
     for user in userData["users"]:
         if user["UID"] == UID:
-            userPassword = data.get("userPassword")
-            creatingDate = data.get("creatingDate")
-            creatingTime = data.get("creatingTime")
+            userPassword = dataFromWeb.get("userPassword")
+            creatingDate = dataFromWeb.get("creatingDate")
+            creatingTime = dataFromWeb.get("creatingTime")
             if user["userPassword"] == hashPassword(
                 userPassword, creatingDate, creatingTime
             ):
