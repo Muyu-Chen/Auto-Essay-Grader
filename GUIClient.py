@@ -388,6 +388,42 @@ def login():
             program_main_window_func()
         else:
             messagebox.showerror("登录失败", "用户名或密码错误")
+
+    def open_register_window():
+        register_window = tk.Toplevel(root)
+        register_window.title("注册")
+        num1=340
+        geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
+        register_window.geometry(geometry_str)
+
+        tk.Label(register_window, text="用户名:").pack(pady=5)
+        entry_new_username = tk.Entry(register_window)
+        entry_new_username.pack(pady=5)
+
+        tk.Label(register_window, text="密码:").pack(pady=5)
+        entry_new_password = tk.Entry(register_window, show="*")
+        entry_new_password.pack(pady=5)
+
+        tk.Label(register_window, text="确认密码:").pack(pady=5)
+        entry_confirm_password = tk.Entry(register_window, show="*")
+        entry_confirm_password.pack(pady=5)
+
+        def register():
+            new_username = entry_new_username.get()
+            new_password = entry_new_password.get()
+            confirm_password = entry_confirm_password.get()
+
+            if new_password == confirm_password:
+                # to be implemented
+                ############################
+                # 在这里添加注册逻辑，例如保存用户名和密码
+                messagebox.showinfo("注册成功", "注册成功，请返回登录")
+                register_window.destroy()
+            else:
+                messagebox.showerror("注册失败", "密码不匹配")
+
+        tk.Button(register_window, text="注册", command=register).pack(pady=20)
+
     global login_window
     global root
     root = tk.Tk()
@@ -397,15 +433,18 @@ def login():
     login_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     # 设置窗口大小
-    #scaling_factor = get_dpi_scaling(login_window)
-    #num1 = 200 * scaling_factor
-    num1=270
+    # scaling_factor = get_dpi_scaling(login_window)
+    # num1 = 200 * scaling_factor
+    num1=340
     geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
     login_window.geometry(geometry_str)
+    # 这里有bug 如果这里设置了缩放
+    # 设置缩放过后，后面的那个窗口会变得很小，所以这里不设置缩放
+    # 我排查过后应该是库的问题
     ## window.tk.call("tk", "scaling", 2)  # 将缩放比例设置为2倍
     ## 自动检测DPI并进行适配
     ## scaling_factor = get_dpi_scaling()
-    #login_window.tk.call("tk", "scaling", scaling_factor * 1.5)
+    # login_window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
     login_window.title("登录")
 
@@ -417,7 +456,10 @@ def login():
     entry_password = tk.Entry(login_window, show="*")
     entry_password.pack(pady=5)
 
-    tk.Button(login_window, text="登录", command=check_login).pack(pady=20)
+    tk.Button(login_window, text="登录", command=check_login).pack(pady=10)
+    register_label = tk.Label(login_window, text="注册", fg="blue", cursor="hand2")
+    register_label.pack(pady=10)
+    register_label.bind("<Button-1>", lambda e: open_register_window())
 
     login_window.mainloop()
 
