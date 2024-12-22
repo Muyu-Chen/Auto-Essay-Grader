@@ -30,6 +30,8 @@ except Exception as e:
 serverAddress = config.get("frontend", {}).get("serverAddress", "http://localhost")
 port = config.get("backend", {}).get("port", "5000")
 serverUrl = "".join([serverAddress, ":", str(port), "/chat"])
+serverUrlLogin = "".join([serverAddress, ":", str(port), "/login"])
+serverUrlRegister = "".join([serverAddress, ":", str(port), "/register"])
 promptFileAddress = config.get("frontend", {}).get(
     "prompt_file_address", "criteria.txt"
 )
@@ -39,7 +41,8 @@ rulePlaySettingsAddress = config.get("frontend", {}).get(
 width_default_value = config.get("frontend", {}).get("width_default_value", 30)
 languageSetting = config.get("frontend", {}).get("language", "zh")
 availableModels = config.get("frontend", {}).get("availableModels")
-
+defaultUserPhone = config.get("frontend", {}).get("userPhone", "please enter your phone")
+defaultUserPassword = config.get("frontend", {}).get("userPassword", "")
 
 try:
     with open(promptFileAddress, "r", encoding="utf-8") as file:
@@ -379,11 +382,48 @@ def on_closing():
             pass
 
 
+def checkIsAuthurized(userPhone, userPassword):
+    # 在这里添加登录逻辑，例如检查用户名和密码是否正确
+    url = serverUrlLogin  # 指向 Flask 后端
+    headers = {"Content-Type": "application/json"}
+    data = {"todo": "isAuthored", "userPhone": userPhone, "userPassword": userPassword}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response)
+    print(response.json())
+    if response.status_code == 200:
+        return True
+
+
+def userRegister(userPhone, userPassword):
+    url = serverUrlRegister  # 指向 Flask 后端
+    headers = {"Content-Type": "application/json"}
+    data = {"userPhone": userPhone, "userPassword": userPassword}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response)
+    print(response.json())
+    if response.status_code == 201:
+        # Update config.json with new user info
+        with open("config.json", "r+", encoding="utf-8") as file:
+            config = json.load(file)
+            config["frontend"]["userPhone"] = userPhone
+            config["frontend"]["userPassword"] = userPassword
+            config["frontend"]["UID"] = response.json().get("UID")
+            # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
+            file.seek(0)
+            json.dump(config, file, ensure_ascii=False, indent=4)
+            # 使用 file.truncate() 清空文件剩余内容
+            file.truncate()
+        return True
+    elif response.status_code == 400 or response.status_code == 500:
+        return False
+
+
 def login():
     def check_login():
         username = entry_username.get()
         password = entry_password.get()
-        if str(username) == "1" and str(password) == "1":  # 简单的用户名和密码验证
+        checkIsAuthurized(username, password)
+        if checkIsAuthurized(username, password):  # 简单的用户名和密码验证
             login_window.destroy()
             program_main_window_func()
         else:
@@ -392,7 +432,7 @@ def login():
     def open_register_window():
         register_window = tk.Toplevel(root)
         register_window.title("注册")
-        num1=340
+        num1 = 340
         geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
         register_window.geometry(geometry_str)
 
@@ -409,16 +449,16 @@ def login():
         entry_confirm_password.pack(pady=5)
 
         def register():
-            new_username = entry_new_username.get()
-            new_password = entry_new_password.get()
+            newUserPhone = entry_new_username.get()
+            newUserPassword = entry_new_password.get()
             confirm_password = entry_confirm_password.get()
 
-            if new_password == confirm_password:
-                # to be implemented
-                ############################
-                # 在这里添加注册逻辑，例如保存用户名和密码
-                messagebox.showinfo("注册成功", "注册成功，请返回登录")
-                register_window.destroy()
+            if newUserPassword == confirm_password:
+                if userRegister(newUserPhone, newUserPassword):
+                    messagebox.showinfo("注册成功", "注册成功，请返回登录")
+                    register_window.destroy()
+                else:
+                    messagebox.showerror("注册失败", "用户已存在")
             else:
                 messagebox.showerror("注册失败", "密码不匹配")
 
@@ -435,7 +475,7 @@ def login():
     # 设置窗口大小
     # scaling_factor = get_dpi_scaling(login_window)
     # num1 = 200 * scaling_factor
-    num1=340
+    num1 = 340
     geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
     login_window.geometry(geometry_str)
     # 这里有bug 如果这里设置了缩放
@@ -451,10 +491,12 @@ def login():
     tk.Label(login_window, text="用户名:").pack(pady=5)
     entry_username = tk.Entry(login_window)
     entry_username.pack(pady=5)
+    entry_username.insert(0, defaultUserPhone)
 
     tk.Label(login_window, text="密码:").pack(pady=5)
     entry_password = tk.Entry(login_window, show="*")
     entry_password.pack(pady=5)
+    entry_password.insert(0, defaultUserPassword)
 
     tk.Button(login_window, text="登录", command=check_login).pack(pady=10)
     register_label = tk.Label(login_window, text="注册", fg="blue", cursor="hand2")
