@@ -123,8 +123,8 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [ ] 增加bug反馈按钮
   
 ### 商业化功能
-- [ ] 后端实现用户增删查改
-- [ ] 前端实现用户登录功能
+- [x] 后端实现用户增删查改
+- [x] 前端实现用户登录功能
 - [ ] 添加用户资料编辑界面
 - [ ] 前后端集成支付充值系统
 - [ ] 加密软件避免破解
@@ -141,6 +141,13 @@ Finally, run `pyinstaller GUIClient.spec`.
 - [ ] 添加用户协议文档
 
 # 更新日志 | Update
+## Dec. 22, 2024
+- [x] 前端实现用户登录功能
+- [x] 后端实现用户增删查改
+- [x] 初始化文件`initialize_config.py`支持双语
+- [x] 在`config.json`中可以直接修改默认模型，方便后台更新
+- [x] 后端集成充值等功能
+- [x] 后端新增用户管理文件，使用json存储
 ## Nov. 11, 2024
 - [x] 配置文件解耦，单独存于json文件中，脱离主程序;
 - [x] prompt解耦，单独存于txt文件中，使得程序的应用更广，可以通过更改`criteria.txt`，`rulePlaySettings.txt`来更改默认配置(不建议修改rulePlaySettings);
