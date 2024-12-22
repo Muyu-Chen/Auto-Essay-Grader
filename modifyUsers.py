@@ -40,7 +40,24 @@ def modifyUserFunc(dataFromWeb):
     elif todo == "addUser":
         addUserFunc(dataFromWeb)
         return 0
-
+    elif todo == "updateUser":
+        updateUserFunc(dataFromWeb)
+        return 0
+    elif todo == "findUser":
+        findUserFunc(dataFromWeb)
+        return 0
+    elif todo == "rechargeAccount":
+        # -1: negative balance; other number: balance
+        return rechargeAccount(dataFromWeb)
+    elif todo == "addUsage":
+        # -1: negative balance; other number: balance
+        # this would not get from web, but from the server
+        # but we will use the same data structure
+        return addUsage(dataFromWeb)
+    elif todo == "updateCurrentBalance":
+        return updateCurrentBalance(dataFromWeb)
+    elif todo == "isAuthored":
+        return isAuthored(dataFromWeb)
     # if UID is none but userPhone is not none,
     # we can get UID by userPhone
     UID = dataFromWeb.get("UID")
@@ -197,12 +214,21 @@ def getUserInfoByPhone(userPhone):
 
 
 def isAuthored(dataFromWeb):
-    UID = dataFromWeb.get("UID")
+    UID = getUserInfoByPhone(dataFromWeb.get("userPhone"))
+    if UID == None or UID == "":
+        UID = dataFromWeb.get("UID")
+        if UID == None or UID == "":
+            raise Exception("user's UID or Phone is required")
+    userPassword = dataFromWeb.get("userPassword")
+    if userPassword == None:
+        raise Exception("user's Password is required")
+
     for user in userData["users"]:
         if user["UID"] == UID:
-            userPassword = dataFromWeb.get("userPassword")
-            creatingDate = dataFromWeb.get("creatingDate")
-            creatingTime = dataFromWeb.get("creatingTime")
+            creatingDate = user.get("creatingDate")
+            creatingTime = user.get("creatingTime")
+            if creatingDate == None or creatingTime == None:
+                raise Exception("creatingDate and creatingTime are required")
             if user["userPassword"] == hashPassword(
                 userPassword, creatingDate, creatingTime
             ):
