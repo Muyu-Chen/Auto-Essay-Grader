@@ -79,36 +79,26 @@ def chat():
 @app.route("/register", methods=["POST"])
 def register():
     data = request.json
-    dataFromWeb["UID"] = UID
-
     userPhone = data.get("userPhone")
     userPassword = data.get("userPassword")
 
     if not userPhone or not userPassword:
-        return jsonify({"error": "手机号和密码不能为空"}), 400
+        return jsonify({"error": "手机号或密码不能为空"}), 400
 
+    data["todo"] = "findUserField"
+    data["field"] = "userPhone"
     # Check if user already exists
-    existing_user = getUserInfoByPhone(userPhone)
-    if existing_user:
+    existing_user = modifyUserFunc(data)
+    # print("is the user existed?:" + str(existing_user))
+    if existing_user is not None and existing_user != "":
         return jsonify({"error": "用户已存在"}), 400
 
     # Register new user
     new_user = {"todo": "addUser", "userPhone": userPhone, "userPassword": userPassword}
     result = modifyUserFunc(new_user)
 
-    if result == 0:
-        # Update config.json with new user info
-        with open("config.json", "r+", encoding="utf-8") as file:
-            config = json.load(file)
-            config["frontend"]["userPhone"] = userPhone
-            config["frontend"]["userPassword"] = userPassword
-            config["frontend"]["UID"] = new_user[
-                "UID"
-            ]  # Assuming UID is returned from addUser
-            file.seek(0)
-            json.dump(config, file, ensure_ascii=False, indent=4)
-            file.truncate()
-        return jsonify({"message": "注册成功", "UID": new_user["UID"]}), 201
+    if result.get("UID") is not None or result.get("UID") != "":
+        return jsonify({"message": "注册成功", "UID": result.get("UID")}), 201
     else:
         return jsonify({"error": "注册失败"}), 500
 

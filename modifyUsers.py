@@ -38,14 +38,12 @@ def modifyUserFunc(dataFromWeb):
     # because addUser do not need UID,
     # so we do not need to check UID here
     elif todo == "addUser":
-        addUserFunc(dataFromWeb)
-        return 0
+        return addUserFunc(dataFromWeb)
     elif todo == "updateUser":
         updateUserFunc(dataFromWeb)
         return 0
-    elif todo == "findUser":
-        findUserFunc(dataFromWeb)
-        return 0
+    elif todo == "findUserField":
+        return findUserFunc(dataFromWeb)
     elif todo == "rechargeAccount":
         # -1: negative balance; other number: balance
         return rechargeAccount(dataFromWeb)
@@ -77,8 +75,7 @@ def modifyUserFunc(dataFromWeb):
         updateUserFunc(dataFromWeb)
         return 0
     elif todo == "findUser":
-        findUserFunc(dataFromWeb)
-        return 0
+        return findUserFunc(dataFromWeb)
     elif todo == "rechargeAccount":
         # -1: negative balance; other number: balance
         return rechargeAccount(dataFromWeb)
@@ -101,7 +98,7 @@ def modifyUserFunc(dataFromWeb):
 # second level interfaces
 def addUserFunc(dataFromWeb):
     print("Now is in addUserFunc")
-    createUser(dataFromWeb)
+    return createUser(dataFromWeb)
 
 
 def updateUserFunc(dataFromWeb):
@@ -122,8 +119,17 @@ def updateUserFunc(dataFromWeb):
 def findUserFunc(dataFromWeb):
     print("Now is in findUserFunc")
     UID = dataFromWeb.get("UID")
+    if UID == None:
+        userPhone = dataFromWeb.get("userPhone")
+        if userPhone == None or userPhone == "":
+            return None
+        else:
+            UID = str(getUserInfoByPhone(userPhone))
+            # if UID is None, means the user is not found
     field = dataFromWeb.get("field")
+    print(f"UID: {UID}, field: {field}")
     userInfo = getUserInfo(UID, field)
+    print(f"userInfo: {userInfo}")
     return userInfo
 
 
@@ -208,17 +214,19 @@ def updateCurrentBalance(UID):
 
 def getUserInfoByPhone(userPhone):
     for user in userData["users"]:
-        if user["userPhone"] == userPhone:
+        if str(user["userPhone"]) == str(userPhone):
             return user["UID"]
     return None
 
 
 def isAuthored(dataFromWeb):
-    UID = getUserInfoByPhone(dataFromWeb.get("userPhone"))
+    print(str(dataFromWeb.get("userPhone")))
+    UID = getUserInfoByPhone(str(dataFromWeb.get("userPhone")))
+    print(f"UID: {UID}")
     if UID == None or UID == "":
         UID = dataFromWeb.get("UID")
         if UID == None or UID == "":
-            raise Exception("user's UID or Phone is required")
+            raise Exception("no such user!")
     userPassword = dataFromWeb.get("userPassword")
     if userPassword == None:
         raise Exception("user's Password is required")
@@ -239,6 +247,8 @@ def isAuthored(dataFromWeb):
 
 # 返回根据 UID 查找的指定字段值
 def getUserInfo(UID, field):
+    if field is None or field == "":
+        return None
     # 遍历 users 数组
     for user in userData["users"]:
         if user["UID"] == UID:
@@ -297,23 +307,23 @@ def setUserInfo(uid, field, newValue):
 ######################################################
 # test:
 # 测试：'12900001' userName 和 totalUsed
-uid_to_update = "12900001"
-field_to_update_1 = "userName"  # 更新 userName
-new_value_1 = "MuYYY_Updated"  # 新的 userName 值
+# uid_to_update = "12900001"
+# field_to_update_1 = "userName"  # 更新 userName
+# new_value_1 = "MuYYY_Updated"  # 新的 userName 值
 
-field_to_update_2 = "totalUsed"  # 更新 totalUsed
-new_value_2 = 150  # 新的 totalUsed 值
+# field_to_update_2 = "totalUsed"  # 更新 totalUsed
+# new_value_2 = 150  # 新的 totalUsed 值
 
-try:
-    # 更新 userName
-    updated_user_1 = setUserInfo(uid_to_update, field_to_update_1, new_value_1)
-    print(f"更新后的用户信息 (userName): {updated_user_1}")
+# try:
+# 更新 userName
+# updated_user_1 = setUserInfo(uid_to_update, field_to_update_1, new_value_1)
+# print(f"更新后的用户信息 (userName): {updated_user_1}")
 
-    # 更新 totalUsed
-    updated_user_2 = setUserInfo(uid_to_update, field_to_update_2, new_value_2)
-    print(f"更新后的用户信息 (totalUsed): {updated_user_2}")
+# 更新 totalUsed
+# updated_user_2 = setUserInfo(uid_to_update, field_to_update_2, new_value_2)
+# print(f"更新后的用户信息 (totalUsed): {updated_user_2}")
 
-except UserNotFoundException as e:
-    print(e)  # 打印用户未找到的错误信息
-except FieldNotFoundException as e:
-    print(e)  # 打印字段未找到的错误信息
+# except UserNotFoundException as e:
+#    print(e)  # 打印用户未找到的错误信息
+# except FieldNotFoundException as e:
+#    print(e)  # 打印字段未找到的错误信息
