@@ -140,11 +140,6 @@ def checkCardPINFunc(cardPIN):
         for pin in dataPrice:
             if pin == cardPIN:
                 value2 = 0
-                # delete the card PIN from the database
-                dataPrice.remove(pin)
-                data[str(parsed_price)] = dataPrice
-                with open("cardPin.json", "w", encoding="utf-8") as f:
-                    json.dump(data, f, ensure_ascii=False, indent=4)
                 break
     if value2 == -1:
         return -1, "Invalid PIN", 0
@@ -152,8 +147,8 @@ def checkCardPINFunc(cardPIN):
 
 
 def generateCardPINFunc(price, uid, option):
-    # option = 1: only this UID is valid
-    # option = 2: all UIDs are valid
+    # option = 0: only this UID is valid
+    # option = 1 or 2: all UIDs are valid
     if len(str(uid)) != 8:
         return -1, "Invalid UID"
     uid = int(uid)
