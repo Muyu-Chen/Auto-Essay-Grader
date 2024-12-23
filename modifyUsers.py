@@ -56,6 +56,8 @@ def modifyUserFunc(dataFromWeb):
         return updateCurrentBalance(dataFromWeb)
     elif todo == "isAuthored":
         return isAuthored(dataFromWeb)
+    elif todo == "generateUserTempToken":
+        return generateUserTempToken(dataFromWeb)
     # if UID is none but userPhone is not none,
     # we can get UID by userPhone
     UID = dataFromWeb.get("UID")
@@ -302,6 +304,19 @@ def setUserInfo(uid, field, newValue):
     raise UserNotFoundException(
         f"Cannot find the information of UID: {uid}"
     )  # Raise an exception if the user is not found
+
+def generateUserTempToken(dataFromWeb):
+    userPhone = dataFromWeb.get("userPhone")
+    experitedTime = dataFromWeb.get("experitedTime") # hours
+    if experitedTime == None or experitedTime == "":
+        experitedTime = 14*24 # 14 days
+    if userPhone == None or userPhone == "":
+        UID = dataFromWeb.get("UID")
+        if UID == None:
+            return -1
+    userPhone = getUserInfo(UID, "userPhone")
+    createTime = datetime.now().strftime("%Y%m%d%H%M%S")
+    return hashPassword(userPhone, createTime, experitedTime)
 
 
 ######################################################

@@ -112,7 +112,21 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     if returnValue:
-        return jsonify({"message": "登录成功"}), 200
+        # token for keep login status
+        dataFromWeb["todo"] = "generateUserTempToken"
+        expirationTime = 24 * 14    # 14 days    
+        dataFromWeb["expirationTime"] = expirationTime
+        token = modifyUserFunc(dataFromWeb)
+        return (
+            jsonify(
+                {
+                    "message": "登录成功",
+                    "userTempToken": token,
+                    "expirationTime": expirationTime,
+                }
+            ),
+            200,
+        )
     else:
         return jsonify({"error": "账号或密码错误"}), 401
 
