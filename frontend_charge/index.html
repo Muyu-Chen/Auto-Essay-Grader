@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值页面</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="login-page">
+        <h1>登录</h1>
+        <input type="text" id="username" placeholder="账号">
+        <input type="password" id="password" placeholder="密码">
+        <button onclick="login()">登录</button>
+        <p id="login-error" class="error"></p>
+    </div>
+
+    <div id="recharge-page" style="display: none;">
+        <h1>充值</h1>
+        <p>余额: <span id="balance">0</span></p>
+        <input type="text" id="card-code" placeholder="卡密">
+        <button onclick="charge()">充值</button>
+        <p id="recharge-message"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
