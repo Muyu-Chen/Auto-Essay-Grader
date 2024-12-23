@@ -209,6 +209,10 @@ def rechargeAccount(data):
 
 def addUsage(data, addNum):
     UID = data.get("UID")
+    if UID == None or UID == "":
+        UID = str(getUserInfoByPhone(data.get("userPhone")))
+    if isAuthored(data) == False:
+        return -1
     totalUsed = data.get("totalUsed") + addNum
     setUserInfo = setUserInfo(UID, "totalUsed", totalUsed)
     remaining = updateCurrentBalance(UID)
@@ -236,7 +240,7 @@ def getUserInfoByPhone(userPhone):
 
 
 def isAuthored(dataFromWeb):
-    print(str(dataFromWeb.get("userPhone")))
+    print("now is in “isAuthored”, phone: "+str(dataFromWeb.get("userPhone")))
     UID = getUserInfoByPhone(str(dataFromWeb.get("userPhone")))
     print(f"UID: {UID}")
     if UID == None or UID == "":

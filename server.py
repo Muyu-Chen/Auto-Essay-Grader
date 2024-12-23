@@ -15,6 +15,16 @@ model_default = config.get("backend", {}).get(
 )  # Default model
 app = Flask(__name__)
 
+PRICE_LEVEL = 100
+PRICE_INPUT_PER_THOUSAND_TURBO = 0.0003 * PRICE_LEVEL
+PRICE_INPUT_PER_THOUSAND_PLUS = 0.0008 * PRICE_LEVEL
+PRICE_INPUT_PER_THOUSAND_MAX = 0.02 * PRICE_LEVEL
+
+PRICE_OUTPUT_PER_THOUSAND_PLUS = 0.0008 * PRICE_LEVEL
+PRICE_OUTPUT_PER_THOUSAND_MAX = 0.06 * PRICE_LEVEL
+PRICE_OUTPUT_PER_THOUSAND_TURBO = 0.0006 * PRICE_LEVEL
+
+
 # THIS IS NOT FOR SAFETY USE.
 # YOU SHOULD USE A WHITELIST TO CONTROL ACCESS.
 CORS(app, origins="*")  # Allow all origins
@@ -36,6 +46,26 @@ with app.app_context():
 def chat():
     try:
         data = request.json
+        userPhone = data.get("userPhone")
+        userPassword = data.get("userPassword")
+        if (
+            userPhone is None
+            or userPhone == ""
+            or userPassword is None
+            or userPassword == ""
+        ):
+            return jsonify({"error": "手机号或密码不能为空"}), 400
+        dataJudgment = {
+            "todo": "isAuthored",
+            "userPhone": userPhone,
+            "userPassword": userPassword,
+        }
+        try:
+            returnValue = modifyUserFunc(dataJudgment)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        if returnValue is None or returnValue == False:
+            return jsonify({"error": "账号或密码错误"}), 401
         messages = data.get("messages")
         systemContent = data.get("systemContent")
         model_get = data.get("model")
@@ -47,6 +77,16 @@ def chat():
         else:
             model_set = model_get
             print("model get is: " + str(model_set))
+
+        if "turbo" in model_set:
+            priceInput = PRICE_INPUT_PER_THOUSAND_TURBO
+            priceOutput = PRICE_OUTPUT_PER_THOUSAND_TURBO
+        elif "plus" in model_set:
+            priceInput = PRICE_INPUT_PER_THOUSAND_PLUS
+            priceOutput = PRICE_OUTPUT_PER_THOUSAND_PLUS
+        else:
+            priceInput = PRICE_INPUT_PER_THOUSAND_MAX
+            priceOutput = PRICE_OUTPUT_PER_THOUSAND_MAX
 
         send_message = [
             {
@@ -63,13 +103,46 @@ def chat():
             model=model_set,
             messages=send_message,
             stream=False,
+            response_format={"type": "json_object"},
         )
 
         def generate():
             if completion:
                 print(completion.model_dump_json())
                 print("completed as above")
+                # input tokens
+                promptTokens = completion.usage.prompt_tokens
+                # output tokens
+                completionTokens = completion.usage.completion_tokens
+
+                totalPrice = promptTokens * priceInput + completionTokens * priceOutput
+                data = {
+                    "todo": "findUserField",
+                    "field": "currentBalance",
+                    "userPhone": userPhone,
+                }
+                # 添加余额显示功能和更新逻辑：在主窗口中显示当前余额，并实现从后端获取余额的功能
+                currentBalance = modifyUserFunc(data)
+                # 如果不能赊账，就直接返回，把这部分注释去掉
+                # 如果允许赊账，就无需修改
+                # if currentBalance < totalPrice:
+                #    return jsonify({"error": "余额不足"}), 401
+                data = {
+                    "todo": "addUsage",
+                    "userPhone": userPhone,
+                    "addNum": totalPrice,
+                }
+                modifyUserFunc(data)
                 return completion.choices[0].message.content
+
+        # 调用生成器之前，先判断余额是否足够
+        data = {
+            "todo": "findUserField",
+            "field": "currentBalance",
+            "userPhone": userPhone,
+        }
+        if modifyUserFunc(data) < 0:
+            return jsonify({"error": "余额不足"}), 401
 
         # print(completion.model_dump_json())
         return Response(generate(), content_type="text/plain")
@@ -115,21 +188,22 @@ def login():
     if returnValue:
         # token for keep login status
         # dataFromWeb["todo"] = "generateUserTempToken"
-        # expirationTime = 24 * 14    # 14 days    
+        # expirationTime = 24 * 14    # 14 days
         # dataFromWeb["expirationTime"] = expirationTime
         # token = modifyUserFunc(dataFromWeb)
         return (
             jsonify(
                 {
                     "message": "登录成功",
-                    #"userTempToken": token,
-                    #"expirationTime": expirationTime,
+                    # "userTempToken": token,
+                    # "expirationTime": expirationTime,
                 }
             ),
             200,
         )
     else:
         return jsonify({"error": "账号或密码错误"}), 401
+
 
 @app.route("/charge", methods=["POST"])
 def charge():
@@ -138,6 +212,13 @@ def charge():
     if userPhone is None or userPhone == "":
         return jsonify({"error": "手机号不能为空"}), 400
     todo = data.get("todo")
+    if todo == "getBalance":
+        data["todo"] = "findUserField"
+        data["field"] = "currentBalance"
+        currentBalance = modifyUserFunc(data)
+        print("currentBalance: " + str(currentBalance))
+        return jsonify({"currentBalance": int(currentBalance)}), 200
+
     if todo == "getBalance":
         data["todo"] = "findUserField"
         data["field"] = "currentBalance"
@@ -179,12 +260,12 @@ def charge():
         except Exception as e:
             print("rechargeAccount error" + str(e))
             return jsonify({"error": str(e)}), 500
-        if returnValue != 0: # 不等于原来的余额就是成功
-            parsed_price=value2
+        if returnValue != 0:  # 不等于原来的余额就是成功
+            parsed_price = value2
             # delete the card PIN from the database
             with open("cardPin.json", "r") as f:
                 data = json.load(f)
-            dataPrice = data.get(str(parsed_price))  
+            dataPrice = data.get(str(parsed_price))
             # Assume price_level is the price level you determined earlier
             if dataPrice:
                 for pin in dataPrice:

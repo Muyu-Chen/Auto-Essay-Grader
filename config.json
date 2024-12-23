@@ -6,13 +6,14 @@
         "language": "zh",
         "locale": "zh-CN",
         "availableModels": [
-            "qwen-max",
+            "qwen-max-latest",
             "qwen-max-0919",
             "qwen-plus",
             "qwen-plus-latest",
+            "qwen-plus-1127",
             "qwen-plus-0919",
-            "qwen-plus-0806",
-            "qwen-turbo"
+            "qwen-turbo",
+            "qwen-turbo-1101"
         ],
         "userName": "MuYYY",
         "userPhone": "18012341234",
@@ -22,6 +23,6 @@
     "backend": {
         "api-key": "sk-xxxx",
         "port": 5000,
-        "model": "qwen-plus-0806"
+        "model": "qwen-plus-1127"
     }
 }
