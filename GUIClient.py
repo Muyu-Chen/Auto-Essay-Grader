@@ -32,6 +32,7 @@ port = config.get("backend", {}).get("port", "5000")
 serverUrl = "".join([serverAddress, ":", str(port), "/chat"])
 serverUrlLogin = "".join([serverAddress, ":", str(port), "/login"])
 serverUrlRegister = "".join([serverAddress, ":", str(port), "/register"])
+serverUrlCharge = "".join([serverAddress, ":", str(port), "/charge"])
 promptFileAddress = config.get("frontend", {}).get(
     "prompt_file_address", "criteria.txt"
 )
@@ -41,8 +42,11 @@ rulePlaySettingsAddress = config.get("frontend", {}).get(
 width_default_value = config.get("frontend", {}).get("width_default_value", 30)
 languageSetting = config.get("frontend", {}).get("language", "zh")
 availableModels = config.get("frontend", {}).get("availableModels")
-defaultUserPhone = config.get("frontend", {}).get("userPhone", "please enter your phone")
+defaultUserPhone = config.get("frontend", {}).get(
+    "userPhone", "please enter your phone"
+)
 defaultUserPassword = config.get("frontend", {}).get("userPassword", "")
+balance_label = None
 
 try:
     with open(promptFileAddress, "r", encoding="utf-8") as file:
@@ -222,6 +226,18 @@ def program_main_window_func():
     )
     label_instructions.pack(pady=10)
 
+    # 创建一个标签用于显示当前余额
+    global balance_label
+    balance_label = tk.Label(
+        program_main_window,  # 父窗口
+        text="Current Balance: $0.000",  # 标签初始文本
+        anchor="e",  # 文本对齐方式为右对齐
+        font=("Microsoft Yahei", 10),  # 字体设置为Arial，大小为12
+        # bg="white",  # 背景颜色为白色
+    )
+    # 将标签放置在窗口的相对位置 (relx=0.9, rely=0.01)，锚点为右上角
+    balance_label.place(relx=0.98, rely=0.01, anchor="ne")
+    update_balance()
     # 模型选择下拉栏
     label_model = tk.Label(program_main_window, text=TchoosingModel)
     label_model.pack()
@@ -361,6 +377,25 @@ def program_main_window_func():
     program_main_window.mainloop()
 
 
+def update_balance():
+    """
+    更新右上角的余额显示
+    """
+    global balance_label
+    url = serverUrlCharge  # 指向 Flask 后端
+    with open("config.json", "r", encoding="utf-8") as file:
+        configNow = json.load(file)
+        userPhone = configNow["frontend"]["userPhone"]
+        userPassword = configNow["frontend"]["userPassword"]
+    headers = {"Content-Type": "application/json"}
+    data = {"todo": "getBalance", "userPhone": userPhone, "userPassword": userPassword}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response)
+    print(response.json())
+    new_balance = response.json().get("currentBalance")
+    balance_label.config(text=f"Current Balance: ${new_balance:.3f}")
+
+
 def on_closing():
     if messagebox.askokcancel("退出", "你确定要退出吗?"):
         try:
@@ -423,7 +458,19 @@ def login():
         username = entry_username.get()
         password = entry_password.get()
         checkIsAuthurized(username, password)
-        if checkIsAuthurized(username, password):  # 简单的用户名和密码验证
+        if checkIsAuthurized(username, password):  # 用户名和密码验证
+            # Update config.json with new user info
+            if defaultUserPhone != username or defaultUserPassword != password:
+                with open("config.json", "r+", encoding="utf-8") as file:
+                    config = json.load(file)
+                config["frontend"]["userPhone"] = username
+                config["frontend"]["userPassword"] = password
+                config["frontend"]["UID"] = "new user"
+                # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
+                file.seek(0)
+                json.dump(config, file, ensure_ascii=False, indent=4)
+                # 使用 file.truncate() 清空文件剩余内容
+                file.truncate()
             login_window.destroy()
             program_main_window_func()
         else:
