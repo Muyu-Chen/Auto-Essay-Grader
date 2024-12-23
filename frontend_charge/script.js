@@ -1,5 +1,3 @@
-let token = "";
-
 function login() {
     const userPhone = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -57,7 +55,8 @@ function getBalance() {
         .then((response) => response.json())
         .then((data) => {
             if (data.currentBalance !== undefined) {
-                document.getElementById("balance").innerText = data.currentBalance;}
+                document.getElementById("balance").innerText = data.currentBalance;
+            }
         })
         .catch(() => {
             document.getElementById("balance").innerText = "获取失败";
@@ -88,6 +87,59 @@ function charge() {
                 getBalance();
             } else {
                 document.getElementById("recharge-message").innerText = "充值失败";
+            }
+        })
+        .catch(() => {
+            document.getElementById("recharge-message").innerText = "服务器错误，请稍后重试";
+        });
+}
+
+// 显示注册页面
+function showRegisterPage() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('register-page').style.display = 'block';
+}
+
+
+// 注册页面逻辑
+function showRegisterPage() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('register-page').style.display = 'block';
+}
+
+function showLoginPage() {
+    document.getElementById('register-page').style.display = 'none';
+    document.getElementById('login-page').style.display = 'block';
+}
+
+async function register() {
+    const userPhone = document.getElementById('register-username').value;
+    const userPassword = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+
+    if (userPassword !== confirmPassword) {
+        document.getElementById('register-error').textContent = '密码不匹配';
+        return;
+    }
+    console.log(username);
+    fetch("http://127.0.0.1:5000/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "userPhone": userPhone,
+            "userPassword": userPassword
+        }),
+    })
+        .then((response) => {
+            if (response.status === 201) {
+                alert('注册成功，请返回登录');
+                showLoginPage();
+            } else if (response.status === 400 || response.status === 500) {
+                alert('注册失败：' + result.message);
+            } else {
+                alert('发生错误，请稍后重试');
             }
         })
         .catch(() => {

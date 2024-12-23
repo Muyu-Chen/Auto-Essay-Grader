@@ -15,6 +15,19 @@
         <input type="password" id="password" placeholder="密码">
         <button onclick="login()">登录</button>
         <p id="login-error" class="error"></p>
+        <a href="javascript:void(0);" onclick="showRegisterPage()" class="register-link">注册</a> <!-- 注册链接 -->
+    </div>
+
+    <!-- 注册页面 -->
+    <div id="register-page" style="display: none;">
+        <h1>注册</h1>
+        <input type="text" id="register-username" placeholder="用户名">
+        <input type="password" id="register-password" placeholder="密码">
+        <input type="password" id="register-confirm-password" placeholder="确认密码">
+        <a><br></a>
+        <button onclick="register()">注册</button>
+        <p id="register-error" class="error"></p>
+        <!-- <button onclick="showLoginPage()">返回登录</button>  返回登录按钮 -->
     </div>
 
     <div id="recharge-page" style="display: none;">
