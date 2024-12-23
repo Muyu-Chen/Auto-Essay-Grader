@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, Response  # Ensure jsonify is importe
 from flask_cors import CORS
 from openai import OpenAI
 import json
-from modifyUsers import modifyUserFunc, getUserInfo
+from modifyUsers import modifyUserFunc
+from checkCardPIN import checkCardPINFunc
 
 with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
@@ -113,22 +114,75 @@ def login():
         return jsonify({"error": str(e)}), 500
     if returnValue:
         # token for keep login status
-        dataFromWeb["todo"] = "generateUserTempToken"
-        expirationTime = 24 * 14    # 14 days    
-        dataFromWeb["expirationTime"] = expirationTime
-        token = modifyUserFunc(dataFromWeb)
+        # dataFromWeb["todo"] = "generateUserTempToken"
+        # expirationTime = 24 * 14    # 14 days    
+        # dataFromWeb["expirationTime"] = expirationTime
+        # token = modifyUserFunc(dataFromWeb)
         return (
             jsonify(
                 {
                     "message": "登录成功",
-                    "userTempToken": token,
-                    "expirationTime": expirationTime,
+                    #"userTempToken": token,
+                    #"expirationTime": expirationTime,
                 }
             ),
             200,
         )
     else:
         return jsonify({"error": "账号或密码错误"}), 401
+
+@app.route("/charge", methods=["POST"])
+def charge():
+    data = request.json
+    userPhone = data.get("userPhone")
+    if userPhone is None or userPhone == "":
+        return jsonify({"error": "手机号不能为空"}), 400
+    todo = data.get("todo")
+    if todo == "getBalance":
+        data["todo"] = "findUserField"
+        data["field"] = "currentBalance"
+        currentBalance = modifyUserFunc(data)
+        print("currentBalance: " + str(currentBalance))
+        return jsonify({"currentBalance": int(currentBalance)}), 200
+
+    if todo == "charge":
+        print("now is in charge")
+        cardPIN = data.get("cardPIN")
+        if cardPIN is None or cardPIN == "":
+            return jsonify({"error": "充值码不能为空"}), 400
+        value1, value2, value3 = checkCardPINFunc(cardPIN)
+        if value1 == -1:
+            return jsonify({"error": "无效：" + str(value2)}), 400
+        if value1 == 0 or value1 == 1 or value1 == 2:
+            data["todo"] = "findUserField"
+            data["field"] = "UID"
+            UID = modifyUserFunc(data)
+            data["UID"] = UID
+            if UID == "" or UID is None:
+                print("UID is None")
+                return jsonify({"error": "错误 找不到UID"}), 400
+            if value1 == 0:
+                # only this UID is valid
+                if UID != value3:
+                    print("UID is not equal to value3")
+                    return jsonify({"error": "无效充值码"}), 400
+            elif value1 == 1 or value1 == 2:
+                # all UIDs are valid
+                pass
+        else:
+            return jsonify({"error": "无效充值码"}), 400
+        data["todo"] = "rechargeAccount"
+        value2 = int(value2)
+        data["addNum"] = value2
+        try:
+            returnValue = modifyUserFunc(data)
+        except Exception as e:
+            print("rechargeAccount error" + str(e))
+            return jsonify({"error": str(e)}), 500
+        if returnValue != 0: # 不等于原来的余额就是成功
+            return jsonify({"message": "充值成功"}), 200
+        else:
+            return jsonify({"error": "充值失败"}), 500
 
 
 if __name__ == "__main__":
