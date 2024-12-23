@@ -155,7 +155,9 @@ def createUser(dataFromWeb, deposit = 0):
     userHashedPassword = hashPassword(userPassword, creating_date, creating_time)
     # find the largest UID
     max_uid = 0
-    for user in userData["users"]:
+    with open("userData.json", "r", encoding="utf-8") as file:
+        userDataNow = json.load(file)
+    for user in userDataNow["users"]:
         try:
             max_uid = max(max_uid, int(user["UID"]))
         except ValueError:
@@ -172,9 +174,9 @@ def createUser(dataFromWeb, deposit = 0):
         "totalUsed": 0,
         "currentBalance": int(deposit),
     }
-    userData["users"].append(new_user)
+    userDataNow["users"].append(new_user)
     with open("userData.json", "w", encoding="utf-8") as file:
-        json.dump(userData, file, ensure_ascii=False, indent=4)
+        json.dump(userDataNow, file, ensure_ascii=False, indent=4)
     
     # Note: Printing passwords is a security risk!!!
     # Avoid doing this in production.
@@ -184,11 +186,21 @@ def createUser(dataFromWeb, deposit = 0):
 
 
 def rechargeAccount(data):
-    UID = data.get("UID")
+    UID = str(data.get("UID"))
+    if UID == None or UID == "":
+        UID = str(getUserInfoByPhone(data.get("userPhone")))
     addNum = data.get("addNum")
-    UID = str(UID)
-    totalDeposite = getUserInfo(UID, "totalDeposite") + addNum
-    setUserInfo(UID, "totalDeposite", totalDeposite)
+    print(f"UID: {UID}, addNum: {addNum}")
+    if str(addNum) == "type1" or str(addNum) == "type2":
+        # some function to change the addNum to a number
+        pass
+    else:
+        addNum = int(addNum)
+    print(str(getUserInfo(UID, "totalDeposit")))
+    totalDeposit = int(getUserInfo(UID, "totalDeposit")) + addNum
+    print(f"totalDeposit: {totalDeposit}")
+    setUserInfo(UID, "totalDeposit", int(totalDeposit))
+    print("the first time to call setUserInfo")
     currentBalance = updateCurrentBalance(UID)
     if currentBalance <= 0:
         return -1
@@ -208,14 +220,16 @@ def addUsage(data, addNum):
 def updateCurrentBalance(UID):
     UID = str(UID)
     totalUsed = getUserInfo(UID, "totalUsed")
-    totalDeposite = getUserInfo(UID, "totalDeposite")
-    currentBalance = totalDeposite - totalUsed
-    setUserInfo = setUserInfo(UID, "currentBalance", currentBalance)
+    totalDeposit = getUserInfo(UID, "totalDeposit")
+    currentBalance = totalDeposit - totalUsed
+    setUserInfo(UID, "currentBalance", currentBalance)
     return currentBalance
 
 
 def getUserInfoByPhone(userPhone):
-    for user in userData["users"]:
+    with open("userData.json", "r", encoding="utf-8") as file:
+        userDataNow = json.load(file)
+    for user in userDataNow["users"]:
         if str(user["userPhone"]) == str(userPhone):
             return user["UID"]
     return None
@@ -232,8 +246,9 @@ def isAuthored(dataFromWeb):
     userPassword = dataFromWeb.get("userPassword")
     if userPassword == None:
         raise Exception("user's Password is required")
-
-    for user in userData["users"]:
+    with open("userData.json", "r", encoding="utf-8") as file:
+        userDataNow = json.load(file)
+    for user in userDataNow["users"]:
         if user["UID"] == UID:
             creatingDate = user.get("creatingDate")
             creatingTime = user.get("creatingTime")
@@ -249,10 +264,12 @@ def isAuthored(dataFromWeb):
 
 # 返回根据 UID 查找的指定字段值
 def getUserInfo(UID, field):
+    with open("userData.json", "r", encoding="utf-8") as file:
+        userDataNow = json.load(file)
     if field is None or field == "":
         return None
     # 遍历 users 数组
-    for user in userData["users"]:
+    for user in userDataNow["users"]:
         if user["UID"] == UID:
             return user.get(field, None)
     return None
@@ -288,7 +305,9 @@ def hashPassword(password, creating_date, creating_time):
 
 # 根据 UID 更新指定字段
 def setUserInfo(uid, field, newValue):
-    for user in userData["users"]:
+    with open("userData.json", "r", encoding="utf-8") as file:
+        userDataNow = json.load(file)
+    for user in userDataNow["users"]:
         if user["UID"] == uid:
             if field == "userPassword":
                 date = user["creatingDate"]
@@ -296,6 +315,12 @@ def setUserInfo(uid, field, newValue):
                 newValue = hashPassword(newValue, date, time)
             if field in user:
                 user[field] = newValue  # update the field
+                print(f"Field {field} updated successfully!"
+                      f" New value: {newValue}")
+                with open("userData.json", "w") as f:
+                    print("write to file")
+                    json.dump(userDataNow, f, ensure_ascii=False, indent=4)
+                    print("write to file done")
                 return user  # return the updated user information
             else:
                 raise FieldNotFoundException(
