@@ -478,14 +478,14 @@ def login():
             if defaultUserPhone != username or defaultUserPassword != password:
                 with open("config.json", "r+", encoding="utf-8") as file:
                     config = json.load(file)
-                config["frontend"]["userPhone"] = username
-                config["frontend"]["userPassword"] = password
-                config["frontend"]["UID"] = "new user"
-                # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
-                file.seek(0)
-                json.dump(config, file, ensure_ascii=False, indent=4)
-                # 使用 file.truncate() 清空文件剩余内容
-                file.truncate()
+                    config["frontend"]["userPhone"] = username
+                    config["frontend"]["userPassword"] = password
+                    config["frontend"]["UID"] = "new user"
+                    # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
+                    file.seek(0)
+                    json.dump(config, file, ensure_ascii=False, indent=4)
+                    # 使用 file.truncate() 清空文件剩余内容
+                    file.truncate()
             login_window.destroy()
             program_main_window_func()
         else:
