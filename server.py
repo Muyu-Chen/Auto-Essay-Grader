@@ -259,7 +259,7 @@ def charge():
         if returnValue != 0:  # 不等于原来的余额就是成功
             parsed_price = value2
             # delete the card PIN from the database
-            with open("cardPin.json", "r") as f:
+            with open("cardPIN.json", "r") as f:
                 data = json.load(f)
             dataPrice = data.get(str(parsed_price))
             # Assume price_level is the price level you determined earlier
@@ -270,7 +270,7 @@ def charge():
                         # delete the card PIN from the database
                         dataPrice.remove(pin)
                         data[str(parsed_price)] = dataPrice
-                        with open("cardPin.json", "w", encoding="utf-8") as f:
+                        with open("cardPIN.json", "w", encoding="utf-8") as f:
                             json.dump(data, f, ensure_ascii=False, indent=4)
                         break
             return jsonify({"message": "充值成功"}), 200

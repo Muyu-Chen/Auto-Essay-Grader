@@ -132,7 +132,7 @@ def checkCardPINFunc(cardPIN):
     print(f"Parsed price: {parsed_price}")
     value2 = -1
     # check if the card PIN is in the database
-    with open("cardPin.json", "r") as f:
+    with open("cardPIN.json", "r") as f:
         data = json.load(f)
     dataPrice = data.get(str(parsed_price))  
     # Assume price_level is the price level you determined earlier
