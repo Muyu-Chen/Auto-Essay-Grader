@@ -136,21 +136,33 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         FunctionArray = np.array(FunctionRead.stack())
         return FunctionArray
 
+    with open("config.json", "r", encoding="utf-8") as file:
+        configNow = json.load(file)
+        userPhone = configNow["frontend"]["userPhone"]
+        userPassword = configNow["frontend"]["userPassword"]
     messages_list = ToArray(file_path, cols, sheet_number)
     url = serverUrl  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
     responses = []  # 初始化一个空列表来存储响应
     for message in messages_list:
-        print("Message:", message)
-        data = {"messages": message, "model": model, "systemContent": systemContent}
+        # 打印前25个字符的消息内容
+        print("Message:", message[:25])
+        data = {
+            "messages": message,
+            "model": model,
+            "systemContent": systemContent,
+            "userPhone": userPhone,
+            "userPassword": userPassword,
+        }
         response = requests.post(url, headers=headers, data=json.dumps(data))
-
+        print("before processing response")
         print(response)
         response_content = response.content.decode("utf-8")
         print(response_content)
         response_content = (
             response_content.replace("```json", "").replace("```", "").strip()
         )
+        print("the processed response: ")
         print(response_content)
         response_data = json.loads(response_content)
 
@@ -164,6 +176,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         print("Response content: " + (grade + ", " + comment)[:50])
 
     input_directory = os.path.dirname(file_path)
+    print(input_directory)
     output_file_path = os.path.join(input_directory, "output.csv")
 
     with open(output_file_path, "w", encoding="ANSI") as f:
@@ -186,6 +199,7 @@ def get_dpi_scaling(window):
 
 
 def auto_save():
+    update_balance()
     scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
     with open("criteria.txt", "w", encoding="utf-8") as file_write:
         file_write.write(scoring_criteria)
@@ -354,6 +368,7 @@ def program_main_window_func():
 
         finally:
             # 当处理完成后重新启用提交按钮（如果有内容变化的话）
+            update_balance()
             submit_button.config(state=tk.NORMAL)
 
     # 当用户修改任何输入时启用按钮

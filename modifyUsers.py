@@ -139,7 +139,7 @@ def findUserFunc(dataFromWeb):
 ###########
 
 
-def createUser(dataFromWeb, deposit = 0):
+def createUser(dataFromWeb, deposit=0):
     # deposit is optional, default is 0
     # if we want to give an initial amount,
     # we can set deposit to a positive number
@@ -177,11 +177,13 @@ def createUser(dataFromWeb, deposit = 0):
     userDataNow["users"].append(new_user)
     with open("userData.json", "w", encoding="utf-8") as file:
         json.dump(userDataNow, file, ensure_ascii=False, indent=4)
-    
+
     # Note: Printing passwords is a security risk!!!
     # Avoid doing this in production.
     # print the new user information
-    print(f"New user {userName} created successfully, UID is {new_uid}. Password is {userPassword}")
+    print(
+        f"New user {userName} created successfully, UID is {new_uid}. Password is {userPassword}"
+    )
     return new_user
 
 
@@ -207,14 +209,19 @@ def rechargeAccount(data):
     return currentBalance
 
 
-def addUsage(data, addNum):
+def addUsage(data):
     UID = data.get("UID")
+    if UID == None or UID == "":
+        UID = str(getUserInfoByPhone(data.get("userPhone")))
+    addNum = data.get("addNum")
+    totalUsed = getUserInfo(UID, "totalUsed")
+    print("totalUsed: " + str(totalUsed))
     if UID == None or UID == "":
         UID = str(getUserInfoByPhone(data.get("userPhone")))
     if isAuthored(data) == False:
         return -1
-    totalUsed = data.get("totalUsed") + addNum
-    setUserInfo = setUserInfo(UID, "totalUsed", totalUsed)
+    totalUsedNew = totalUsed + addNum
+    temp1 = setUserInfo(UID, "totalUsed", totalUsedNew)
     remaining = updateCurrentBalance(UID)
     if remaining <= 0:
         return -1
@@ -240,7 +247,8 @@ def getUserInfoByPhone(userPhone):
 
 
 def isAuthored(dataFromWeb):
-    print("now is in “isAuthored”, phone: "+str(dataFromWeb.get("userPhone")))
+    print("now is in “isAuthored”, phone: " + str(dataFromWeb.get("userPhone")))
+    print("uerPassword: " + str(dataFromWeb.get("userPassword")))
     UID = getUserInfoByPhone(str(dataFromWeb.get("userPhone")))
     print(f"UID: {UID}")
     if UID == None or UID == "":
@@ -319,8 +327,7 @@ def setUserInfo(uid, field, newValue):
                 newValue = hashPassword(newValue, date, time)
             if field in user:
                 user[field] = newValue  # update the field
-                print(f"Field {field} updated successfully!"
-                      f" New value: {newValue}")
+                print(f"Field {field} updated successfully!" f" New value: {newValue}")
                 with open("userData.json", "w") as f:
                     print("write to file")
                     json.dump(userDataNow, f, ensure_ascii=False, indent=4)
@@ -334,11 +341,12 @@ def setUserInfo(uid, field, newValue):
         f"Cannot find the information of UID: {uid}"
     )  # Raise an exception if the user is not found
 
+
 def generateUserTempToken(dataFromWeb):
     userPhone = dataFromWeb.get("userPhone")
-    experitedTime = dataFromWeb.get("experitedTime") # hours
+    experitedTime = dataFromWeb.get("experitedTime")  # hours
     if experitedTime == None or experitedTime == "":
-        experitedTime = 14*24 # 14 days
+        experitedTime = 14 * 24  # 14 days
     if userPhone == None or userPhone == "":
         UID = dataFromWeb.get("UID")
         if UID == None:

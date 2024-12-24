@@ -16,13 +16,13 @@ model_default = config.get("backend", {}).get(
 app = Flask(__name__)
 
 PRICE_LEVEL = 100
-PRICE_INPUT_PER_THOUSAND_TURBO = 0.0003 * PRICE_LEVEL
-PRICE_INPUT_PER_THOUSAND_PLUS = 0.0008 * PRICE_LEVEL
-PRICE_INPUT_PER_THOUSAND_MAX = 0.02 * PRICE_LEVEL
+PRICE_INPUT_PER_THOUSAND_TURBO = 0.0003 / 1000 * PRICE_LEVEL
+PRICE_INPUT_PER_THOUSAND_PLUS = 0.0008 / 1000 * PRICE_LEVEL
+PRICE_INPUT_PER_THOUSAND_MAX = 0.02 / 1000 * PRICE_LEVEL
 
-PRICE_OUTPUT_PER_THOUSAND_PLUS = 0.0008 * PRICE_LEVEL
-PRICE_OUTPUT_PER_THOUSAND_MAX = 0.06 * PRICE_LEVEL
-PRICE_OUTPUT_PER_THOUSAND_TURBO = 0.0006 * PRICE_LEVEL
+PRICE_OUTPUT_PER_THOUSAND_PLUS = 0.0008 / 1000 * PRICE_LEVEL
+PRICE_OUTPUT_PER_THOUSAND_MAX = 0.06 / 1000 * PRICE_LEVEL
+PRICE_OUTPUT_PER_THOUSAND_TURBO = 0.0006 / 1000 * PRICE_LEVEL
 
 
 # THIS IS NOT FOR SAFETY USE.
@@ -63,7 +63,7 @@ def chat():
         try:
             returnValue = modifyUserFunc(dataJudgment)
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": str(e)}), 501
         if returnValue is None or returnValue == False:
             return jsonify({"error": "账号或密码错误"}), 401
         messages = data.get("messages")
@@ -120,6 +120,7 @@ def chat():
                     "todo": "findUserField",
                     "field": "currentBalance",
                     "userPhone": userPhone,
+                    "userPassword": userPassword,
                 }
                 # 添加余额显示功能和更新逻辑：在主窗口中显示当前余额，并实现从后端获取余额的功能
                 currentBalance = modifyUserFunc(data)
@@ -130,6 +131,7 @@ def chat():
                 data = {
                     "todo": "addUsage",
                     "userPhone": userPhone,
+                    "userPassword": userPassword,
                     "addNum": totalPrice,
                 }
                 modifyUserFunc(data)
@@ -140,6 +142,7 @@ def chat():
             "todo": "findUserField",
             "field": "currentBalance",
             "userPhone": userPhone,
+            "userPassword": userPassword,
         }
         if modifyUserFunc(data) < 0:
             return jsonify({"error": "余额不足"}), 401
@@ -147,7 +150,7 @@ def chat():
         # print(completion.model_dump_json())
         return Response(generate(), content_type="text/plain")
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 502
 
 
 @app.route("/register", methods=["POST"])
@@ -174,7 +177,7 @@ def register():
     if result.get("UID") is not None or result.get("UID") != "":
         return jsonify({"message": "注册成功", "UID": result.get("UID")}), 201
     else:
-        return jsonify({"error": "注册失败"}), 500
+        return jsonify({"error": "注册失败"}), 503
 
 
 @app.route("/login", methods=["POST"])
@@ -184,7 +187,7 @@ def login():
     try:
         returnValue = modifyUserFunc(dataFromWeb)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 504
     if returnValue:
         # token for keep login status
         # dataFromWeb["todo"] = "generateUserTempToken"
@@ -217,14 +220,7 @@ def charge():
         data["field"] = "currentBalance"
         currentBalance = modifyUserFunc(data)
         print("currentBalance: " + str(currentBalance))
-        return jsonify({"currentBalance": int(currentBalance)}), 200
-
-    if todo == "getBalance":
-        data["todo"] = "findUserField"
-        data["field"] = "currentBalance"
-        currentBalance = modifyUserFunc(data)
-        print("currentBalance: " + str(currentBalance))
-        return jsonify({"currentBalance": int(currentBalance)}), 200
+        return jsonify({"currentBalance": float(currentBalance)}), 200
 
     if todo == "charge":
         print("now is in charge")
@@ -259,7 +255,7 @@ def charge():
             returnValue = modifyUserFunc(data)
         except Exception as e:
             print("rechargeAccount error" + str(e))
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": str(e)}), 505
         if returnValue != 0:  # 不等于原来的余额就是成功
             parsed_price = value2
             # delete the card PIN from the database
@@ -279,7 +275,7 @@ def charge():
                         break
             return jsonify({"message": "充值成功"}), 200
         else:
-            return jsonify({"error": "充值失败"}), 500
+            return jsonify({"error": "充值失败"}), 506
 
 
 if __name__ == "__main__":
