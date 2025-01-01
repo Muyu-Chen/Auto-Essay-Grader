@@ -30,7 +30,7 @@ def initialize_config():
         config['frontend']['serverAddress'] = get_user_input("输入服务器地址", config['frontend']['serverAddress'])
         config['frontend']['promptFileAddress'] = get_user_input("输入提示文件地址", config['frontend']['promptFileAddress'])
         config['frontend']['rulePlaySettings'] = get_user_input("输入规则播放设置地址", config['frontend']['rulePlaySettings'])
-        config['frontend']['locale'] = get_user_input("输入locale", config['frontend']['locale'])
+        config['frontend']['locale'] = get_user_input("输入区域", config['frontend']['locale'])
     # 保存配置到 config.json 文件
     with open('config.json', 'w', encoding='utf-8') as file:
         json.dump(config, file, ensure_ascii=False, indent=4)

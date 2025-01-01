@@ -1,8 +1,13 @@
+// change the URL to your own server URL
+const loginURL = "http://localhost:5000/login";
+const chargeURL = "http://localhost:5000/charge";
+const registerURL = "http://localhost:5000/register";
+
 function login() {
     const userPhone = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     console.log(userPhone);
-    fetch("http://localhost:5000/login", {
+    fetch(loginURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -41,7 +46,7 @@ function getBalance() {
     const userPhone = localStorage.getItem("userPhone");
     const userPassword = localStorage.getItem("userPassword");
     console.log(userPhone);
-    fetch("http://localhost:5000/charge", {
+    fetch(chargeURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -67,7 +72,7 @@ function charge() {
     const cardCode = document.getElementById("card-code").value;
     const userPhone = localStorage.getItem("userPhone");
     const userPassword = localStorage.getItem("userPassword");
-    fetch("http://127.0.0.1:5000/charge", {
+    fetch(chargeURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -122,7 +127,7 @@ async function register() {
         return;
     }
     console.log(username);
-    fetch("http://127.0.0.1:5000/register", {
+    fetch(registerURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
