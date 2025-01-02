@@ -4,7 +4,12 @@ from openai import OpenAI
 import json
 from modifyUsers import modifyUserFunc
 from checkCardPIN import checkCardPINFunc
+import os
 
+# todo: change the directory of the config file
+configFile = os.path.join(os.path.dirname(__file__), "..\\src\\config.json")
+cardPINFile = os.path.join(os.path.dirname(__file__), "..\\src\\cardPIN.json")
+fileLogPath = os.path.join(os.path.dirname(__file__), "..\\src\\fileLog.csv")
 with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
 api_key_get = config.get("backend", {}).get("api-key", "api-key-error")
