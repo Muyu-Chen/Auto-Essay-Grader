@@ -6,7 +6,7 @@ import requests
 import json
 import pandas as pd
 import numpy as np
-import os
+from os import path
 import openpyxl
 import xlrd
 import winsound
@@ -175,9 +175,9 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         # 打印响应内容 这个因为不具有调试价值，所以只打印前50个字符
         print("Response content: " + (grade + ", " + comment)[:50])
 
-    input_directory = os.path.dirname(file_path)
+    input_directory = path.dirname(file_path)
     print(input_directory)
-    output_file_path = os.path.join(input_directory, "output.csv")
+    output_file_path = path.join(input_directory, "output.csv")
 
     with open(output_file_path, "w", encoding="ANSI") as f:
         for response in responses:
@@ -276,7 +276,7 @@ def program_main_window_func():
     # 定义拖放事件处理函数
     def drop(event):
         file_path = event.data.strip("{}")
-        file_path = os.path.normpath(file_path)  # 标准化文件路径
+        file_path = path.normpath(file_path)  # 标准化文件路径
         entry_file_name.delete(1.0, tk.END)  # 清空现有内容
         entry_file_name.insert(1.0, file_path)  # 将拖放的文件路径插入输入框
 
