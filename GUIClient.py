@@ -42,8 +42,8 @@ rulePlaySettingsAddress = config.get("frontend", {}).get(
 width_default_value = config.get("frontend", {}).get("width_default_value", 30)
 languageSetting = config.get("frontend", {}).get("language", "zh")
 availableModels = config.get("frontend", {}).get("availableModels")
-defaultUserPhone = config.get("frontend", {}).get(
-    "userPhone", "please enter your phone"
+defaultuserAccount = config.get("frontend", {}).get(
+    "userAccount", "please enter your phone"
 )
 defaultUserPassword = config.get("frontend", {}).get("userPassword", "")
 balance_label = None
@@ -138,20 +138,22 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
 
     with open("config.json", "r", encoding="utf-8") as file:
         configNow = json.load(file)
-        userPhone = configNow["frontend"]["userPhone"]
+        userAccount = configNow["frontend"]["userAccount"]
         userPassword = configNow["frontend"]["userPassword"]
     messages_list = ToArray(file_path, cols, sheet_number)
     url = serverUrl  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
     responses = []  # 初始化一个空列表来存储响应
     for message in messages_list:
+        print("\n—————————————————————————————passage begin—————————————————————————————")
+
         # 打印前25个字符的消息内容
         print("Message:", message[:25])
         data = {
             "messages": message,
             "model": model,
             "systemContent": systemContent,
-            "userPhone": userPhone,
+            "userAccount": userAccount,
             "userPassword": userPassword,
         }
         response = requests.post(url, headers=headers, data=json.dumps(data))
@@ -173,7 +175,14 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         # 将评分和评论添加到列表中
         responses.append(grade + ", " + comment)
         # 打印响应内容 这个因为不具有调试价值，所以只打印前50个字符
-        print("Response content: " + (grade + ", " + comment)[:50])
+        print("————————————————————— the processed response —————————————————————")
+        print(response_content)
+        # 打印响应内容 这个因为不具有调试价值，所以只打印前50个字符
+        print(
+            "(是否正确提取成绩？)Response content: \n" + (grade + ", " + comment)[:50]
+        )
+        print("—————————————————————————————passage end—————————————————————————————\n")
+
 
     input_directory = path.dirname(file_path)
     print(input_directory)
@@ -244,7 +253,7 @@ def program_main_window_func():
     global balance_label
     balance_label = tk.Label(
         program_main_window,  # 父窗口
-        text="Current Balance: $0.000",  # 标签初始文本
+        text="Current Balance: ￥0.000",  # 标签初始文本
         anchor="e",  # 文本对齐方式为右对齐
         font=("Microsoft Yahei", 10),  # 字体设置为Arial，大小为12
         # bg="white",  # 背景颜色为白色
@@ -400,10 +409,10 @@ def update_balance():
     url = serverUrlCharge  # 指向 Flask 后端
     with open("config.json", "r", encoding="utf-8") as file:
         configNow = json.load(file)
-        userPhone = configNow["frontend"]["userPhone"]
+        userAccount = configNow["frontend"]["userAccount"]
         userPassword = configNow["frontend"]["userPassword"]
     headers = {"Content-Type": "application/json"}
-    data = {"todo": "getBalance", "userPhone": userPhone, "userPassword": userPassword}
+    data = {"todo": "getBalance", "userAccount": userAccount, "userPassword": userPassword}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
@@ -432,11 +441,11 @@ def on_closing():
             pass
 
 
-def checkIsAuthurized(userPhone, userPassword):
+def checkIsAuthurized(userAccount, userPassword):
     # 在这里添加登录逻辑，例如检查用户名和密码是否正确
     url = serverUrlLogin  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
-    data = {"todo": "isAuthored", "userPhone": userPhone, "userPassword": userPassword}
+    data = {"todo": "isAuthored", "userAccount": userAccount, "userPassword": userPassword}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
@@ -444,10 +453,10 @@ def checkIsAuthurized(userPhone, userPassword):
         return True
 
 
-def userRegister(userPhone, userPassword):
+def userRegister(userAccount, userPassword):
     url = serverUrlRegister  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
-    data = {"userPhone": userPhone, "userPassword": userPassword}
+    data = {"userAccount": userAccount, "userPassword": userPassword}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
@@ -455,7 +464,7 @@ def userRegister(userPhone, userPassword):
         # Update config.json with new user info
         with open("config.json", "r+", encoding="utf-8") as file:
             config = json.load(file)
-            config["frontend"]["userPhone"] = userPhone
+            config["frontend"]["userAccount"] = userAccount
             config["frontend"]["userPassword"] = userPassword
             config["frontend"]["UID"] = response.json().get("UID")
             # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
@@ -475,10 +484,10 @@ def login():
         checkIsAuthurized(username, password)
         if checkIsAuthurized(username, password):  # 用户名和密码验证
             # Update config.json with new user info
-            if defaultUserPhone != username or defaultUserPassword != password:
+            if defaultuserAccount != username or defaultUserPassword != password:
                 with open("config.json", "r+", encoding="utf-8") as file:
                     config = json.load(file)
-                    config["frontend"]["userPhone"] = username
+                    config["frontend"]["userAccount"] = username
                     config["frontend"]["userPassword"] = password
                     config["frontend"]["UID"] = "new user"
                     # 使用 file.seek(0) 将文件指针移动到开头，再写入更新后的内容
@@ -511,12 +520,12 @@ def login():
         entry_confirm_password.pack(pady=5)
 
         def register():
-            newUserPhone = entry_new_username.get()
+            newuserAccount = entry_new_username.get()
             newUserPassword = entry_new_password.get()
             confirm_password = entry_confirm_password.get()
 
             if newUserPassword == confirm_password:
-                if userRegister(newUserPhone, newUserPassword):
+                if userRegister(newuserAccount, newUserPassword):
                     messagebox.showinfo("注册成功", "注册成功，请返回登录")
                     register_window.destroy()
                 else:
@@ -553,7 +562,7 @@ def login():
     tk.Label(login_window, text="用户名:").pack(pady=5)
     entry_username = tk.Entry(login_window)
     entry_username.pack(pady=5)
-    entry_username.insert(0, defaultUserPhone)
+    entry_username.insert(0, defaultuserAccount)
 
     tk.Label(login_window, text="密码:").pack(pady=5)
     entry_password = tk.Entry(login_window, show="*")
