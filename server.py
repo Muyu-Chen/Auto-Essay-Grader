@@ -53,18 +53,18 @@ with app.app_context():
 def chat():
     try:
         data = request.json
-        userPhone = data.get("userPhone")
+        userAccount = data.get("userAccount")
         userPassword = data.get("userPassword")
         if (
-            userPhone is None
-            or userPhone == ""
+            userAccount is None
+            or userAccount == ""
             or userPassword is None
             or userPassword == ""
         ):
             return jsonify({"error": "手机号或密码不能为空"}), 400
         dataJudgment = {
             "todo": "isAuthored",
-            "userPhone": userPhone,
+            "userAccount": userAccount,
             "userPassword": userPassword,
         }
         try:
@@ -126,7 +126,7 @@ def chat():
                 data = {
                     "todo": "findUserField",
                     "field": "currentBalance",
-                    "userPhone": userPhone,
+                    "userAccount": userAccount,
                     "userPassword": userPassword,
                 }
                 # 添加余额显示功能和更新逻辑：在主窗口中显示当前余额，并实现从后端获取余额的功能
@@ -137,7 +137,7 @@ def chat():
                 #    return jsonify({"error": "余额不足"}), 401
                 data = {
                     "todo": "addUsage",
-                    "userPhone": userPhone,
+                    "userAccount": userAccount,
                     "userPassword": userPassword,
                     "addNum": totalPrice,
                 }
@@ -148,7 +148,7 @@ def chat():
         data = {
             "todo": "findUserField",
             "field": "currentBalance",
-            "userPhone": userPhone,
+            "userAccount": userAccount,
             "userPassword": userPassword,
         }
         if modifyUserFunc(data) < 0:
@@ -163,14 +163,14 @@ def chat():
 @app.route("/register", methods=["POST"])
 def register():
     data = request.json
-    userPhone = data.get("userPhone")
+    userAccount = data.get("userAccount")
     userPassword = data.get("userPassword")
 
-    if not userPhone or not userPassword:
+    if not userAccount or not userPassword:
         return jsonify({"error": "手机号或密码不能为空"}), 400
 
     data["todo"] = "findUserField"
-    data["field"] = "userPhone"
+    data["field"] = "userAccount"
     # Check if user already exists
     existing_user = modifyUserFunc(data)
     # print("is the user existed?:" + str(existing_user))
@@ -178,7 +178,7 @@ def register():
         return jsonify({"error": "用户已存在"}), 400
 
     # Register new user
-    new_user = {"todo": "addUser", "userPhone": userPhone, "userPassword": userPassword}
+    new_user = {"todo": "addUser", "userAccount": userAccount, "userPassword": userPassword}
     result = modifyUserFunc(new_user)
 
     if result.get("UID") is not None or result.get("UID") != "":
@@ -218,8 +218,8 @@ def login():
 @app.route("/charge", methods=["POST"])
 def charge():
     data = request.json
-    userPhone = data.get("userPhone")
-    if userPhone is None or userPhone == "":
+    userAccount = data.get("userAccount")
+    if userAccount is None or userAccount == "":
         return jsonify({"error": "手机号不能为空"}), 400
     todo = data.get("todo")
     if todo == "getBalance":
