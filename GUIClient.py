@@ -453,10 +453,14 @@ def checkIsAuthurized(userAccount, userPassword):
         return True
 
 
-def userRegister(userAccount, userPassword):
+def userRegister(userAccount, userPassword, referredbyUID):
     url = serverUrlRegister  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
-    data = {"userAccount": userAccount, "userPassword": userPassword}
+    data = {
+        "userAccount": userAccount,
+        "userPassword": userPassword,
+        "referredByUID": referredbyUID,
+    }
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
@@ -511,6 +515,10 @@ def login():
         entry_new_username = tk.Entry(register_window)
         entry_new_username.pack(pady=5)
 
+        tk.Label(register_window, text="推荐码:").pack(pady=5)
+        entry_refer_UID = tk.Entry(register_window)
+        entry_refer_UID.pack(pady=5)
+
         tk.Label(register_window, text="密码:").pack(pady=5)
         entry_new_password = tk.Entry(register_window, show="*")
         entry_new_password.pack(pady=5)
@@ -521,11 +529,12 @@ def login():
 
         def register():
             newuserAccount = entry_new_username.get()
+            referredbyUID = entry_refer_UID.get()
             newUserPassword = entry_new_password.get()
             confirm_password = entry_confirm_password.get()
 
             if newUserPassword == confirm_password:
-                if userRegister(newuserAccount, newUserPassword):
+                if userRegister(newuserAccount, newUserPassword, str(referredbyUID)):
                     messagebox.showinfo("注册成功", "注册成功，请返回登录")
                     register_window.destroy()
                 else:
