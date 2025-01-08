@@ -3,10 +3,12 @@
         {
             "UID": "12900001",
             "userName": "MuYYY",
-            "userPhone": "18012341234",
+            "userAccount": "18012341234",
+            "phoneNumber": "18012341234",
             "userPassword": "db540c9ef81f59987a4f1a027991903a55e5a887bf807df18aededab2391c482",
             "creatingDate": "20241222",
             "creatingTime": "032507",
+            "referredByUID": "0",
             "totalDeposit": 100,
             "totalUsed": 0,
             "currentBalance": 100
@@ -14,10 +16,12 @@
         {
             "UID": "1290002",
             "userName": "5000",
-            "userPhone": "18012342234",
+            "userAccount": "18012342234",
+            "phoneNumber": "18012341234",
             "userPassword": "db540c9ef81f59987a4f1a027991903a55e5a887bf807df18aededab2391c482",
             "creatingDate": "20241222",
             "creatingTime": "032507",
+            "referredByUID": "0",
             "totalDeposit": 100,
             "totalUsed": 100,
             "currentBalance": 0

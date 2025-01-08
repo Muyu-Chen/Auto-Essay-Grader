@@ -8,7 +8,7 @@ with open("userData.json", "r", encoding="utf-8") as file:
 #   {
 #       "UID": "12900001",
 #       "userName": "MuYYY",
-#       "userPhone": "18012341234",
+#       "userAccount": "18012341234",
 #       "userPassword": "abcdefg",
 #       "creatingDate": "20241217",
 #       "creatingTime": "120821",
@@ -19,7 +19,7 @@ with open("userData.json", "r", encoding="utf-8") as file:
 #   data = {
 #       "todo": "addUser",
 #       "userName": "ABC",
-#       "userPhone": "18012341234",
+#       "userAccount": "18012341234",
 #       "userPassword": "abcdefg"
 #       }
 #   data = {
@@ -58,15 +58,15 @@ def modifyUserFunc(dataFromWeb):
         return isAuthored(dataFromWeb)
     elif todo == "generateUserTempToken":
         return generateUserTempToken(dataFromWeb)
-    # if UID is none but userPhone is not none,
-    # we can get UID by userPhone
+    # if UID is none but userAccount is not none,
+    # we can get UID by userAccount
     UID = dataFromWeb.get("UID")
     if UID == None:
-        userPhone = dataFromWeb.get("userPhone")
-        if userPhone == None or userPhone == "":
+        userAccount = dataFromWeb.get("userAccount")
+        if userAccount == None or userAccount == "":
             return -1
         else:
-            UID = str(getUserInfoByPhone(userPhone))
+            UID = str(getUserInfoByAccount(userAccount))
             if UID == None:
                 return -1
             else:
@@ -122,11 +122,11 @@ def findUserFunc(dataFromWeb):
     print("Now is in findUserFunc")
     UID = dataFromWeb.get("UID")
     if UID == None:
-        userPhone = dataFromWeb.get("userPhone")
-        if userPhone == None or userPhone == "":
+        userAccount = dataFromWeb.get("userAccount")
+        if userAccount == None or userAccount == "":
             return None
         else:
-            UID = str(getUserInfoByPhone(userPhone))
+            UID = str(getUserInfoByAccount(userAccount))
             # if UID is None, means the user is not found
     field = dataFromWeb.get("field")
     print(f"UID: {UID}, field: {field}")
@@ -147,7 +147,7 @@ def createUser(dataFromWeb, deposit=0):
         return -1
     print("Now is in addUserFunction")
     userName = dataFromWeb.get("userName")
-    userPhone = dataFromWeb.get("userPhone")
+    userAccount = dataFromWeb.get("userAccount")
     userPassword = dataFromWeb.get("userPassword")
     current_time = datetime.now()
     creating_date = current_time.strftime("%Y%m%d")  # "20241217"
@@ -166,7 +166,7 @@ def createUser(dataFromWeb, deposit=0):
     new_user = {
         "UID": new_uid,
         "userName": userName,
-        "userPhone": userPhone,
+        "userAccount": userAccount,
         "userPassword": userHashedPassword,
         "creatingDate": creating_date,
         "creatingTime": creating_time,
@@ -190,7 +190,7 @@ def createUser(dataFromWeb, deposit=0):
 def rechargeAccount(data):
     UID = str(data.get("UID"))
     if UID == None or UID == "":
-        UID = str(getUserInfoByPhone(data.get("userPhone")))
+        UID = str(getUserInfoByAccount(data.get("userAccount")))
     addNum = data.get("addNum")
     print(f"UID: {UID}, addNum: {addNum}")
     if str(addNum) == "type1" or str(addNum) == "type2":
@@ -212,12 +212,12 @@ def rechargeAccount(data):
 def addUsage(data):
     UID = data.get("UID")
     if UID == None or UID == "":
-        UID = str(getUserInfoByPhone(data.get("userPhone")))
+        UID = str(getUserInfoByAccount(data.get("userAccount")))
     addNum = data.get("addNum")
     totalUsed = getUserInfo(UID, "totalUsed")
     print("totalUsed: " + str(totalUsed))
     if UID == None or UID == "":
-        UID = str(getUserInfoByPhone(data.get("userPhone")))
+        UID = str(getUserInfoByAccount(data.get("userAccount")))
     if isAuthored(data) == False:
         return -1
     totalUsedNew = totalUsed + addNum
@@ -237,19 +237,19 @@ def updateCurrentBalance(UID):
     return currentBalance
 
 
-def getUserInfoByPhone(userPhone):
+def getUserInfoByAccount(userAccount):
     with open("userData.json", "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
     for user in userDataNow["users"]:
-        if str(user["userPhone"]) == str(userPhone):
+        if str(user["userAccount"]) == str(userAccount):
             return user["UID"]
     return None
 
 
 def isAuthored(dataFromWeb):
-    print("now is in “isAuthored”, phone: " + str(dataFromWeb.get("userPhone")))
+    print("now is in “isAuthored”, phone: " + str(dataFromWeb.get("userAccount")))
     print("uerPassword: " + str(dataFromWeb.get("userPassword")))
-    UID = getUserInfoByPhone(str(dataFromWeb.get("userPhone")))
+    UID = getUserInfoByAccount(str(dataFromWeb.get("userAccount")))
     print(f"UID: {UID}")
     if UID == None or UID == "":
         UID = dataFromWeb.get("UID")
@@ -343,17 +343,17 @@ def setUserInfo(uid, field, newValue):
 
 
 def generateUserTempToken(dataFromWeb):
-    userPhone = dataFromWeb.get("userPhone")
+    userAccount = dataFromWeb.get("userAccount")
     experitedTime = dataFromWeb.get("experitedTime")  # hours
     if experitedTime == None or experitedTime == "":
         experitedTime = 14 * 24  # 14 days
-    if userPhone == None or userPhone == "":
+    if userAccount == None or userAccount == "":
         UID = dataFromWeb.get("UID")
         if UID == None:
             return -1
-    userPhone = getUserInfo(UID, "userPhone")
+    userAccount = getUserInfo(UID, "userAccount")
     createTime = datetime.now().strftime("%Y%m%d%H%M%S")
-    return hashPassword(userPhone, createTime, experitedTime)
+    return hashPassword(userAccount, createTime, experitedTime)
 
 
 ######################################################
