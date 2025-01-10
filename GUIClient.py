@@ -11,6 +11,7 @@ import openpyxl
 import xlrd
 import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
+from pyautogui import position, moveTo
 from language import *  # import language variables
 
 try:
@@ -33,6 +34,7 @@ serverUrl = "".join([serverAddress, ":", str(port), "/chat"])
 serverUrlLogin = "".join([serverAddress, ":", str(port), "/login"])
 serverUrlRegister = "".join([serverAddress, ":", str(port), "/register"])
 serverUrlCharge = "".join([serverAddress, ":", str(port), "/charge"])
+serverUrlData = "".join([serverAddress, ":", str(port), "/getData"])
 promptFileAddress = config.get("frontend", {}).get(
     "prompt_file_address", "criteria.txt"
 )
@@ -406,18 +408,21 @@ def update_balance():
     更新右上角的余额显示
     """
     global balance_label
-    url = serverUrlCharge  # 指向 Flask 后端
     with open("config.json", "r", encoding="utf-8") as file:
         configNow = json.load(file)
         userAccount = configNow["frontend"]["userAccount"]
         userPassword = configNow["frontend"]["userPassword"]
     headers = {"Content-Type": "application/json"}
-    data = {"todo": "getBalance", "userAccount": userAccount, "userPassword": userPassword}
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    data = {
+        "todo": "getBalance",
+        "userAccount": userAccount,
+        "userPassword": userPassword,
+    }
+    response = requests.post(serverUrlData, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
     new_balance = response.json().get("currentBalance")
-    balance_label.config(text=f"Current Balance: ${new_balance:.3f}")
+    balance_label.config(text=f"Current Balance: ￥{new_balance:.3f}")
 
 
 def on_closing():
@@ -445,7 +450,7 @@ def checkIsAuthurized(userAccount, userPassword):
     # 在这里添加登录逻辑，例如检查用户名和密码是否正确
     url = serverUrlLogin  # 指向 Flask 后端
     headers = {"Content-Type": "application/json"}
-    data = {"todo": "isAuthored", "userAccount": userAccount, "userPassword": userPassword}
+    data = {"todo": "isVerified", "userAccount": userAccount, "userPassword": userPassword}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
     print(response.json())
@@ -507,7 +512,8 @@ def login():
     def open_register_window():
         register_window = tk.Toplevel(root)
         register_window.title("注册")
-        num1 = 340
+        factor = get_dpi_scaling(register_window)
+        num1 = 340 * factor
         geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
         register_window.geometry(geometry_str)
 
@@ -552,19 +558,11 @@ def login():
     login_window = tk.Toplevel(root)  # 创建独立的登录窗口
     login_window.protocol("WM_DELETE_WINDOW", on_closing)
 
-    # 设置窗口大小
-    # scaling_factor = get_dpi_scaling(login_window)
+    scaling_factor = get_dpi_scaling(login_window)
     # num1 = 200 * scaling_factor
-    num1 = 340
+    num1 = 250 * scaling_factor
     geometry_str = f"{int(num1)}x{int(num1*0.8)}"  # 宽*高
     login_window.geometry(geometry_str)
-    # 这里有bug 如果这里设置了缩放
-    # 设置缩放过后，后面的那个窗口会变得很小，所以这里不设置缩放
-    # 我排查过后应该是库的问题
-    ## window.tk.call("tk", "scaling", 2)  # 将缩放比例设置为2倍
-    ## 自动检测DPI并进行适配
-    ## scaling_factor = get_dpi_scaling()
-    # login_window.tk.call("tk", "scaling", scaling_factor * 1.5)
 
     login_window.title("登录")
 
