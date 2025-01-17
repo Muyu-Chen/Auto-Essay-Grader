@@ -63,7 +63,7 @@ def chat():
         ):
             return jsonify({"error": "手机号或密码不能为空"}), 400
         dataJudgment = {
-            "todo": "isAuthored",
+            "todo": "isVerified",
             "userAccount": userAccount,
             "userPassword": userPassword,
         }
@@ -190,7 +190,7 @@ def register():
 @app.route("/login", methods=["POST"])
 def login():
     dataFromWeb = request.json
-    dataFromWeb["todo"] = "isAuthored"
+    dataFromWeb["todo"] = "isVerified"
     try:
         returnValue = modifyUserFunc(dataFromWeb)
     except Exception as e:
@@ -283,6 +283,79 @@ def charge():
             return jsonify({"message": "充值成功"}), 200
         else:
             return jsonify({"error": "充值失败"}), 506
+
+
+@app.route("/getData", methods=["POST"])
+def getData():
+    data = request.json
+    todo = data.get("todo")
+    filed = data.get("field")
+    if DEBUG_MODE:
+        print("Now is in server.getData. todo: " + str(todo))
+    UID = data.get("UID")
+    if UID == "" or UID is None or UID == "None":
+        userAccount = data.get("userAccount")
+        if DEBUG_MODE:
+            print("userAccount: " + str(userAccount))
+        if userAccount is None or userAccount == "" or userAccount == "None":
+            return jsonify({"error": "用户名不能为空"}), 400
+        else:
+            data["todo"] = "findUserField"
+            data["field"] = "UID"
+            try:
+                UID = modifyUserFunc(data)
+            except Exception as e:
+                print("getData error: " + str(e))
+                return jsonify({"error": str(e)}), 400
+            if UID == "" or UID is None:
+                return jsonify({"error": "找不到用户"}), 400
+        data["UID"] = UID
+        data["todo"] = todo
+        data["field"] = filed
+
+    if todo == "getBalance":
+        data["todo"] = "findUserField"
+        data["field"] = "currentBalance"
+        try:
+            currentBalance = modifyUserFunc(data)
+        except Exception as e:
+            print("getBalance error: " + str(e))
+            return jsonify({"error": str(e)}), 400
+        return jsonify({"currentBalance": float(currentBalance)}), 200
+    if todo == "getData":
+        data["todo"] = "findUserField"
+        data["field"] = "userName"
+        try:
+            userName = modifyUserFunc(data)
+            data["field"] = "currentBalance"
+            currentBalance = modifyUserFunc(data)
+            data["field"] = "userAccount"
+            userAccount = modifyUserFunc(data)
+            data["field"] = "email"
+            email = modifyUserFunc(data)
+            data["field"] = "personalBio"
+            personalBio = modifyUserFunc(data)
+            data["field"] = "phoneNumber"
+            phoneNumber = modifyUserFunc(data)
+        except Exception as e:
+            print("getData error: " + str(e))
+            return jsonify({"error": str(e)}), 400
+        return (
+            jsonify(
+                {
+                    "userName": userName,
+                    "currentBalance": float(currentBalance),
+                    "UID": UID,
+                    "userAccount": userAccount,
+                    "email": email,
+                    "personalBio": personalBio,
+                    "phoneNumber": phoneNumber,
+                }
+            ),
+            200,
+        )
+    return jsonify({"error": "未知操作"}), 402
+
 
 
 if __name__ == "__main__":
