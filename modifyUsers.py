@@ -54,8 +54,8 @@ def modifyUserFunc(dataFromWeb):
         return addUsage(dataFromWeb)
     elif todo == "updateCurrentBalance":
         return updateCurrentBalance(dataFromWeb)
-    elif todo == "isAuthored":
-        return isAuthored(dataFromWeb)
+    elif todo == "isVerified":
+        return isVerified(dataFromWeb)
     elif todo == "generateUserTempToken":
         return generateUserTempToken(dataFromWeb)
     # if UID is none but userAccount is not none,
@@ -89,8 +89,8 @@ def modifyUserFunc(dataFromWeb):
     elif todo == "updateCurrentBalance":
         updateCurrentBalance(dataFromWeb)
         return 0
-    elif todo == "isAuthored":
-        isAuthored(dataFromWeb)
+    elif todo == "isVerified":
+        isVerified(dataFromWeb)
         return 0
     else:
         return -1
@@ -218,7 +218,7 @@ def addUsage(data):
     print("totalUsed: " + str(totalUsed))
     if UID == None or UID == "":
         UID = str(getUserInfoByAccount(data.get("userAccount")))
-    if isAuthored(data) == False:
+    if isVerified(data) == False:
         return -1
     totalUsedNew = totalUsed + addNum
     temp1 = setUserInfo(UID, "totalUsed", totalUsedNew)
@@ -246,8 +246,8 @@ def getUserInfoByAccount(userAccount):
     return None
 
 
-def isAuthored(dataFromWeb):
-    print("now is in “isAuthored”, phone: " + str(dataFromWeb.get("userAccount")))
+def isVerified(dataFromWeb):
+    print("now is in “isVerified”, phone: " + str(dataFromWeb.get("userAccount")))
     print("uerPassword: " + str(dataFromWeb.get("userPassword")))
     UID = getUserInfoByAccount(str(dataFromWeb.get("userAccount")))
     print(f"UID: {UID}")
