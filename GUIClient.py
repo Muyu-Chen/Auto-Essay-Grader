@@ -1,3 +1,4 @@
+import subprocess
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -13,6 +14,23 @@ import winsound
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from pyautogui import position, moveTo
 from language import *  # import language variables
+
+Debug_mode = False
+
+# ABOUT AUTO UPDATE
+# if you do not want to check for updates, 
+# you cannot comment out the following code,
+# just do not modify the updateJsonURL and updateEXEPath
+version = "2.3.1"
+updateJsonURL = "http://xxxx.xxx/xxx/update.json"  # the URL of the update.json file
+
+# the path of the update.exe file
+# this file could be find in my another repository
+# called "Lite-Update-Checker"
+# using the newest release version is recommended
+# it's easy to use and can be found in the release page
+updateEXEPath = "./update.exe"  
+
 
 try:
     with open("config.json", "r", encoding="utf-8") as file:
@@ -49,6 +67,37 @@ defaultuserAccount = config.get("frontend", {}).get(
 )
 defaultUserPassword = config.get("frontend", {}).get("userPassword", "")
 balance_label = None
+
+try:
+    # 调用可执行文件 目前需要修改的内容
+    exe_path = updateEXEPath
+    result = subprocess.Popen(
+        [
+            exe_path,
+            "-version",
+            version,
+            "-url",
+            updateJsonURL,
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+    )
+    # 等待程序执行完成并获取输出
+    stdout, stderr = result.communicate()
+    print("return code:", result.returncode)
+    print("标准输出:", stdout)
+    print("错误输出:", stderr)
+    if result.returncode == 1:
+        print("返回值为1，需要更新")
+        print("Exiting due to update requirement.")
+        exit(0)
+    else:
+        print(f"返回值为{result.returncode}, 无需更新")
+except Exception as e:
+    print(f"更新过程中发生错误: {e}")
+
 
 try:
     with open(promptFileAddress, "r", encoding="utf-8") as file:

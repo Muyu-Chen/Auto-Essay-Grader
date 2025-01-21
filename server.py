@@ -7,6 +7,8 @@ from checkCardPIN import checkCardPINFunc
 from sys import argv
 from os import path
 
+DEBUG_MODE=True
+
 # todo: change the directory of the config file
 thisDir = path.dirname(path.realpath(argv[0]))
 configFile = path.join(thisDir, "config.json")
@@ -355,7 +357,6 @@ def getData():
             200,
         )
     return jsonify({"error": "未知操作"}), 402
-
 
 
 if __name__ == "__main__":
