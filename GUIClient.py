@@ -33,7 +33,7 @@ updateEXEPath = "./update.exe"
 
 
 try:
-    with open("config.json", "r", encoding="utf-8") as file:
+    with open("config.json", "r", encoding="utf-8-sig") as file:
         config = json.load(file)
 except FileNotFoundError:
     print("The config.json file was not found.")
@@ -82,7 +82,7 @@ try:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        encoding="utf-8",
+        encoding="utf-8-sig",
     )
     # 等待程序执行完成并获取输出
     stdout, stderr = result.communicate()
@@ -100,7 +100,7 @@ except Exception as e:
 
 
 try:
-    with open(promptFileAddress, "r", encoding="utf-8") as file:
+    with open(promptFileAddress, "r", encoding="utf-8-sig") as file:
         criteriaInFile = file.read()
 except FileNotFoundError:
     print(f"The file {promptFileAddress} was not found.")
@@ -110,7 +110,7 @@ except Exception as e:
     criteriaInFile = ""
 
 try:
-    with open(rulePlaySettingsAddress, "r", encoding="utf-8") as file:
+    with open(rulePlaySettingsAddress, "r", encoding="utf-8-sig") as file:
         rulePlaySettings = file.read()
 except FileNotFoundError:
     print(f"The file {rulePlaySettingsAddress} was not found.")
@@ -187,7 +187,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
         FunctionArray = np.array(FunctionRead.stack())
         return FunctionArray
 
-    with open("config.json", "r", encoding="utf-8") as file:
+    with open("config.json", "r", encoding="utf-8-sig") as file:
         configNow = json.load(file)
         userAccount = configNow["frontend"]["userAccount"]
         userPassword = configNow["frontend"]["userPassword"]
@@ -239,7 +239,7 @@ def process_essay(model, file_path, columns, title, criteria, sheet_number):
     print(input_directory)
     output_file_path = path.join(input_directory, "output.csv")
 
-    with open(output_file_path, "w", encoding="ANSI") as f:
+    with open(output_file_path, "w", encoding="utf-8-sig") as f:
         for response in responses:
             f.write(response + "\n")
     frequency = 440  # 频率，单位为赫兹
@@ -261,7 +261,7 @@ def get_dpi_scaling(window):
 def auto_save():
     update_balance()
     scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
-    with open("criteria.txt", "w", encoding="utf-8") as file_write:
+    with open("criteria.txt", "w", encoding="utf-8-sig") as file_write:
         file_write.write(scoring_criteria)
     # 每隔30s（30000毫秒）调用一次auto_save函数
     program_main_window.after(30000, auto_save)
@@ -406,7 +406,7 @@ def program_main_window_func():
         column_count = entry_column_count.get("1.0", "end-1c")
         essay_title = text_essay_title.get("1.0", "end-1c")  # 获取大文本框内容
         scoring_criteria = text_scoring_criteria.get("1.0", "end-1c")
-        with open("criteria.txt", "w", encoding="utf-8") as file_write:
+        with open("criteria.txt", "w", encoding="utf-8-sig") as file_write:
             file_write.write(scoring_criteria)
 
         try:
@@ -457,7 +457,7 @@ def update_balance():
     更新右上角的余额显示
     """
     global balance_label
-    with open("config.json", "r", encoding="utf-8") as file:
+    with open("config.json", "r", encoding="utf-8-sig") as file:
         configNow = json.load(file)
         userAccount = configNow["frontend"]["userAccount"]
         userPassword = configNow["frontend"]["userPassword"]
@@ -520,7 +520,7 @@ def userRegister(userAccount, userPassword, referredbyUID):
     print(response.json())
     if response.status_code == 201:
         # Update config.json with new user info
-        with open("config.json", "r+", encoding="utf-8") as file:
+        with open("config.json", "r+", encoding="utf-8-sig") as file:
             config = json.load(file)
             config["frontend"]["userAccount"] = userAccount
             config["frontend"]["userPassword"] = userPassword
@@ -543,7 +543,7 @@ def login():
         if checkIsAuthurized(username, password):  # 用户名和密码验证
             # Update config.json with new user info
             if defaultuserAccount != username or defaultUserPassword != password:
-                with open("config.json", "r+", encoding="utf-8") as file:
+                with open("config.json", "r+", encoding="utf-8-sig") as file:
                     config = json.load(file)
                     config["frontend"]["userAccount"] = username
                     config["frontend"]["userPassword"] = password
