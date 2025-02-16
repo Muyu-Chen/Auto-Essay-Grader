@@ -5,7 +5,7 @@ import json
 from modifyUsers import modifyUserFunc
 from checkCardPIN import checkCardPINFunc
 from sys import argv
-from os import path
+from os import makedirs, path
 
 DEBUG_MODE=True
 
@@ -14,6 +14,8 @@ thisDir = path.dirname(path.realpath(argv[0]))
 configFile = path.join(thisDir, "config.json")
 cardPINFile = path.join(thisDir, "cardPIN.json")
 fileLogPath = path.join(thisDir, "fileLog.csv")
+UPLOAD_FOLDER = path.join(thisDir, "uploads")
+#makedirs(UPLOAD_FOLDER, exist_ok=True)
 with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
 api_key_get = config.get("backend", {}).get("api-key", "api-key-error")
@@ -357,6 +359,48 @@ def getData():
             200,
         )
     return jsonify({"error": "未知操作"}), 402
+
+
+@app.route("/checkStatus", methods=["GET"])
+def checkStatus():
+    userAccount = request.args.get("userAccount")
+    fileID = request.args.get("fileID")
+    if userAccount is None or userAccount == "" or userAccount == "None":
+        return jsonify({"error": "用户名不能为空 checkStatus"}), 400
+    if fileID is None or fileID == "":
+        return jsonify({"error": "fileID不能为空 checkStatus"}), 400
+    data = {}
+    data["todo"] = "findUserField"
+    data["field"] = "UID"
+    data["userAccount"] = userAccount
+    try:
+        UID = str(modifyUserFunc(data))
+        data["UID"] = UID
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    if UID == "" or UID is None:
+        return jsonify({"error": "找不到用户 checkSatus"}), 400
+    filepathUser = path.join(UPLOAD_FOLDER, UID)
+    makedirs(filepathUser, exist_ok=True)
+    filepathNameIsProcessing = path.join(filepathUser, "isProcessing.txt")
+    if not path.exists(filepathNameIsProcessing):
+        return jsonify({"isProcessing": "false"}), 200
+    try:
+        with open(filepathNameIsProcessing, "r", encoding="utf-8") as file:
+            isProcessing = file.read()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    if isProcessing == "true":
+        return jsonify({"complete": "false"}), 200
+    elif isProcessing == "false":
+        downloadLink = (
+            "http://47.109.109.48/programs/essayJudgement/serverV2.4/server/uploads/"
+            + UID
+            + "/output_"
+            + fileID
+            + ".csv"
+        )
+        return jsonify({"complete": "true", "downloadLink": downloadLink}), 200
 
 
 if __name__ == "__main__":
