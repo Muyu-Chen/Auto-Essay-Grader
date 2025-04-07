@@ -247,25 +247,58 @@ def getUserInfoByAccount(userAccount):
 
 
 def isVerified(dataFromWeb):
-    print("now is in “isVerified”, phone: " + str(dataFromWeb.get("userAccount")))
-    print("uerPassword: " + str(dataFromWeb.get("userPassword")))
+    print(dataFromWeb)
+    if DEBUG_MODEL:
+        print("now is in “isVerified”, Account: " + str(dataFromWeb.get("userAccount")))
+        print("uerPassword: " + str(dataFromWeb.get("userPassword")))
     UID = getUserInfoByAccount(str(dataFromWeb.get("userAccount")))
     print(f"UID: {UID}")
-    if UID == None or UID == "":
+    if UID == None or UID == "" or UID == "None":
         UID = dataFromWeb.get("UID")
-        if UID == None or UID == "":
-            raise Exception("no such user!")
+        if UID == None or UID == "" or UID == "None":
+            print("no such user")
+            raise Exception("no such user")
     userPassword = dataFromWeb.get("userPassword")
-    if userPassword == None:
-        raise Exception("user's Password is required")
-    with open("userData.json", "r", encoding="utf-8") as file:
+
+    # 更新用户正在使用的版本号和最新登录时间
+    isLogin = dataFromWeb.get("isLogin")
+
+    if isLogin == "False" or isLogin == False or isLogin == "false":
+        if DEBUG_MODEL:
+            print("is in isVerified, but isLogin is False")
+        # 不更新版本号
+    elif isLogin == "True" or isLogin == True or isLogin == "true":
+        userVersion = dataFromWeb.get("version")
+        if userVersion == None or userVersion == "" or userVersion == "None":
+            if DEBUG_MODEL:
+                print("user is using app version, but there is no version number")
+            # 不更新版本号
+            pass
+        elif userVersion == "web":
+            if DEBUG_MODEL:
+                print("user is using web version")
+        else:
+            setUserInfo(UID, "version", userVersion)
+        # 更新最新登录时间
+        lastLoginTime = datetime.now().strftime("%Y%m%d%H%M")
+        setUserInfo(UID, "lastLoginTime", lastLoginTime)
+    else:
+        if DEBUG_MODEL:
+            print("在isVerified中，没有更新版本号，因为isLogin不是True也不是False")
+            print("isLogin: " + str(isLogin))
+        else:
+            print("错误：在modifyUsers.py - isVerified (1)")
+
+    if userPassword == None or userPassword == "" or userPassword == "None":
+        raise Exception("no password")
+    with open(userDataFile, "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
     for user in userDataNow["users"]:
         if user["UID"] == UID:
             creatingDate = user.get("creatingDate")
             creatingTime = user.get("creatingTime")
-            if creatingDate == None or creatingTime == None:
-                raise Exception("creatingDate and creatingTime are required")
+            if creatingDate == None or creatingTime == None or creatingDate == "" or creatingTime == "" or creatingDate == "None" or creatingTime == "None":
+                raise Exception("no creating time")
             if user["userPassword"] == hashPassword(
                 userPassword, creatingDate, creatingTime
             ):
