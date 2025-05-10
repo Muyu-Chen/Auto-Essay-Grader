@@ -135,6 +135,21 @@ def chat():
             "userAccount": userAccount,
             "userPassword": userPassword,
         }
+        try:
+            priceLevel = modifyUserFunc(dataJudgment)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 501
+        if priceLevel == None or priceLevel == "None" or priceLevel == "":
+            priceLevel = 100
+        model_get = data.get("model")
+        if model_get is None or model_get == "" or model_get == "None":
+            model_set = model_default
+            print(
+                "no model set has been recieved, use default model: " + str(model_set)
+            )
+        else:
+            model_set = model_get
+            print("model get is: " + str(model_set))
             
         if "turbo" in model_set:
             priceInput = PRICE_INPUT_PER_THOUSAND_TURBO
