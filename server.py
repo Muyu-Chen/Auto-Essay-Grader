@@ -46,6 +46,37 @@ CORS(app, origins="*")  # Allow all origins
 # For better security, implement additional measures like authentication, IP restrictions, or rate limiting.
 
 
+def process_essay_thread(
+    model,
+    filepathName,
+    columns,
+    essayPrompt,
+    essayCriteria,
+    sheet_number,
+    userAccount,
+    userPassword,
+    rulePlaySettings,
+    systemPromptFirst,
+    outputcsvName,
+    logcsvName,
+    defaultCri,
+):
+    process_essay_from_web(
+        model,  # 第三次的模型
+        filepathName,  # 作文文件路径（具体到文件）
+        columns,  # 作文所在列
+        essayPrompt,  # 作文题目
+        essayCriteria,  # 评分标准
+        sheet_number,  # 作文所在工作表
+        userAccount,  # 用户账号
+        userPassword,  # 用户密码
+        rulePlaySettings,  # 评分规则
+        systemPromptFirst,  # 第一次的提示 string
+        outputcsvName,  # 输出文件名，名称即可，不需要路径
+        logcsvName,  # 日志文件名
+        defaultCri,  # 是不是默认的criteria
+    )
+
 with app.app_context():
     client = OpenAI(
         api_key=api_key_get,
@@ -59,11 +90,14 @@ def chat():
         data = request.json
         userAccount = data.get("userAccount")
         userPassword = data.get("userPassword")
+        jsonOrNot = data.get("jsonOrNot")
         if (
             userAccount is None
             or userAccount == ""
             or userPassword is None
             or userPassword == ""
+            or userAccount == "None"
+            or userPassword == "None"
         ):
             return jsonify({"error": "手机号或密码不能为空"}), 400
         dataJudgment = {
@@ -75,10 +109,17 @@ def chat():
             returnValue = modifyUserFunc(dataJudgment)
         except Exception as e:
             return jsonify({"error": str(e)}), 501
+        if returnValue == -1:
+            return jsonify({"error": "找不到用户"}), 400
         if returnValue is None or returnValue == False:
             return jsonify({"error": "账号或密码错误"}), 401
+
+        if DEBUG_MODE == True:
+            print("chat 路由 身份验证成功")
+            
         messages = data.get("messages")
         systemContent = data.get("systemContent")
+        
         model_get = data.get("model")
         if model_get is None or model_get == "":
             model_set = model_default
@@ -88,7 +129,13 @@ def chat():
         else:
             model_set = model_get
             print("model get is: " + str(model_set))
-
+        dataJudgment = {
+            "todo": "findUserField",
+            "field": "priceLevel",
+            "userAccount": userAccount,
+            "userPassword": userPassword,
+        }
+            
         if "turbo" in model_set:
             priceInput = PRICE_INPUT_PER_THOUSAND_TURBO
             priceOutput = PRICE_OUTPUT_PER_THOUSAND_TURBO
