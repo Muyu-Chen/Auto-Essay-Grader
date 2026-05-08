@@ -1,0 +1,197 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f6f6ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+.profile-container {
+    width: 360px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.background-image {
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid white;
+}
+
+.profile-header {
+    text-align: center;
+    position: absolute;
+    bottom: -45px;
+    margin-top: 20px;
+}
+
+.nickname {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 8px;
+    position: relative;
+    top: 12px;
+    /* 通过 top 属性向下移动名字 */
+}
+
+
+.user-id {
+    font-size: 14px;
+    color: #333;
+    margin-top: 13px;
+}
+
+.profile-details {
+    padding: 20px;
+    margin-top: 60px;
+}
+
+.info a {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    color: #333;
+    text-decoration: none;
+}
+
+
+.profile-left {
+    color: #333;
+    min-width: 80px;
+    font-weight: bold;
+    /* 加粗字体 */
+
+}
+
+#refLink {
+    max-width: 40%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* 如果需要针对特定链接进行样式调整，可以这样做 
+a[href="vip.html"] .profile-left {
+    color: gold;
+    /* VIP等级的文本颜色设为金色 
+}
+
+a[href="signature.html"] .profile-left {
+    color: #007BFF;
+    /* 个性签名的文本颜色设为蓝色 
+}
+*/
+
+.right-align {
+    color: #555;
+    text-align: right;
+}
+
+/* 按钮样式 */
+.actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-link {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    /* 去掉按钮的下划线 */
+}
+
+.btn-link:hover {
+    background-color: #0056b3;
+}
+
+.logout {
+    background-color: #dc3545;
+}
+
+.logout:hover {
+    background-color: #c82333;
+}
+
+/* 灰色的“注销账号” */
+.delete-account {
+    color: #888;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.delete-account:hover {
+    color: #555;
+}
+
+/* 可编辑内容框 */
+.editable {
+    cursor: pointer;
+    
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: background-color 0.3s, border-color 0.3s;
+    /*padding: 5px;*/
+}
+
+.editable:hover {
+    background-color: rgb(232, 232, 232);
+    /* 鼠标悬停时背景变灰 */
+    border: 1px dashed rgb(232, 232, 232);
+    /* 添加虚线边框 */
+}
+
+.editing {
+    border: 1px solid lightblue;
+    /* 编辑状态的边框颜色 */
+    background-color: #f9f9ff;
+    /* 编辑状态背景 */
+    outline: none;
+    /* 去除默认高亮边框 */
+}

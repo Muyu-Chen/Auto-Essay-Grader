@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <a href="../mainpage.html" class="back-button">返回</a>
+    <div class="profile-container">
+        <div class="background-image">
+            <div class="profile-header">
+                <img src="avatar.jpg" alt="头像" class="avatar">
+                <h2 class="nickname editable" contenteditable="false" data-id="field-UserName">MuYYY</h2>
+                <p class="user-id">账号UID：<a id="UID"> </a></p>
+                <!--使用js填充-->
+            </div>
+        </div>
+        <div class="profile-details">
+            <div class="info">
+                <!--注意！！！！这里需要修改！！！-->
+                <a href="#" onclick="charge()">
+                    <span class="profile-left">余额</span>
+                    <span class="right-align" style="display: flex; align-items: center;">
+                        <!--使用js填充-->
+                        <span id="balance" style="margin-top: 2px; margin-right: 1px;"> </span><span>元</span>
+                    </span>
+                </a>
+                <a href="#"><span class="profile-left">个性签名</span><span class="right-align editable"
+                        contenteditable="false" data-id="field1">加载中...</span></a>
+                <a href="#"><span class="profile-left">邮箱</span><span class="right-align editable"
+                        contenteditable="false" data-id="field2">加载中...</span></a>
+                <a href="#"><span class="profile-left">手机号</span><span class="right-align editable"
+                        contenteditable="false" data-id="field3">加载中...</span></a>
+                <a href="#" onclick="copyToClipboard()"><span class="profile-left">邀请链接（点击复制）</span><span
+                        class="right-align" id="refLink">加载中...</span></a>
+            </div>
+            <div class="actions">
+                <!-- <a href="#" class="btn-link" onclick="boundOtherAccount()">绑定第三方账号</a>  -->
+                <a href="#" class="btn-link" onclick="charge()">余额充值</a>
+                <a href="#" class="btn-link" onclick="changePassword()">更改密码</a>
+                <a href="#" class="btn-link logout" onclick="logout()">退出登录</a>
+                <a href="#" class="delete-account" onclick="deleteAccount()">注销（永久删除）账号</a>
+            </div>
+        </div>
+    </div>
+    <script src="../../config.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

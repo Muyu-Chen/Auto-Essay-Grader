@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#login-page,
+#register-page,
+#recharge-page {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    color: #fff;
+    background: #007BFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}
+#register-page button {
+    background-color: #007bff;
+}
+
+#register-page button:hover {
+    background-color: #0056b3;
+}
+
+#register-page p {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* 注册链接的样式 */
+.register-link {
+    display: block;
+    text-align: center;
+    color: #007bff;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+.back-button {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}

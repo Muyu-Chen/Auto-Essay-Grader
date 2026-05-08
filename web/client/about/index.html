@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于 Auto Essay Grader</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            color: #0056b1;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            color: #555;
+        }
+
+        .section p {
+            margin: 0;
+            padding: 5px 0;
+            text-indent: 2em;
+        }
+
+        .section ul {
+            padding-left: 20px;
+        }
+
+        .section ul li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            background: #a3d0ff;
+            color: #fff;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>关于 Auto Essay Grader</h1>
+        </header>
+
+        <div class="section">
+            <h2>什么是 Auto Essay Grader？</h2>
+            <p>Auto Essay Grader 自动作文评分系统，是一个基于先进语言模型 API 的自动评分工具，旨在帮助用户快速、准确地批量评分作文。通过简单的操作，您可以上传包含作文的 Excel
+                文件，定义评分标准，工具会自动生成分数和反馈。</p>
+        </div>
+
+        <div class="section">
+            <h2>作者是谁？</h2>
+            <p>此项目由 Muyu Chen 开发，目标是通过技术简化教育工作流程，提高作文批改效率。此前尝试过商业化分支，目前相关功能已经回流到开源仓库统一维护。</p>
+        </div>
+
+        <div class="section">
+            <h2>如何使用？</h2>
+            <p>当前仓库同时提供桌面端和网页端。桌面端位于 <code>client/</code>，网页端位于 <code>web/</code>，后端服务位于 <code>server/</code>。</p>
+            <p>启动后端后，可以打开 <a href="../index.html">网页登录页</a>，也可以继续使用桌面端客户端。</p>
+        </div>
+
+        <div class="section">
+            <h2>核心功能</h2>
+            <ul>
+                <li>批量作文评分：支持 Excel 文件导入，一次性评分多篇作文。</li>
+                <li>自定义评分标准：根据任务需求设置评分维度，例如任务完成度、连贯性、词汇多样性和语法准确性。</li>
+                <li>支持多种模型选择：根据性能和成本需求选择适合的语言模型。</li>
+                <li>详细的评分反馈：自动生成作文分数并附带评语。</li>
+                <li>用户友好界面：简单直观的操作流程。</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>如何使用开源项目？</h2>
+            <p>使用 Auto Essay Grader 非常简单：</p>
+            <ol>
+                <li>打开<a href="https://github.com/Muyu-Chen/Auto-Essay-Grader" target="_blank"
+                        style="font-size: 16px; font-weight: bold;">项目地址</a>并<a
+                        style="font-size: 22px; font-weight: bold;">点赞</a>。</a></li>
+                <li>下载项目到本地并解压。</li>
+                <li>安装依赖并配置 API 密钥。</li>
+                <li>准备 Excel 文件，将作文内容放入一列。</li>
+                <li>运行后端和前端程序，启动工具。</li>
+                <li>定义评分标准并上传文件。</li>
+                <li>点击提交，等待系统生成评分和反馈。</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>未来计划</h2>
+            <p>后续计划包括自动打开网页端、继续改进界面表现，以及补充更完整的评分流程和使用体验。</p>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Auto Essay Grader | 作者: Muyu Chen</p>
+            <p>本界面由GPT-4o根据项目内容自动完成。ChatGPT 也可能会犯错。请核查重要信息。</p>
+        </footer>
+    </div>
+</body>
+
+</html>

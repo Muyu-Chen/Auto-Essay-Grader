@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="mainpageStyles.css">
+    <title>Main Page</title>
+</head>
+
+<body>
+
+    <header>
+        <nav style="background-color: #a3adff; min-width: 760px;">
+            <ul class="nav-list">
+
+                <li class="nav-item nav-header">
+                    <a href="./about" class="headerlink">Auto Essay Grader</a>
+                </li>
+
+                <li class="nav-item nav-invisible"></li> <!-- 不可见元素 -->
+                <li class="nav-item"><a href="./help/" class="headerlink">❓帮助</a></li>
+                <li class="nav-item">
+                    <a href="javascript:void(0);" onclick="logout()" class="headerlink">❌注销</a>
+                </li>
+                <li class="nav-item"><a href="./account/" class="headerlink">👤我的</a></li>
+                <li class="nav-item">⚙️设置</li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+
+
+
+        <div class="sidebar">
+            <div id="" class="main-page-block instruction">
+                <div style="font-size: 20px;">
+                    <p>使用说明（可以滚动噢！）</p>
+                </div>
+                <div style="text-align: left; padding-left: 1em;">
+                    <p style="text-indent: -1em; padding-left: 1em;">1. 选择模型（建议选 Qwen-Plus）；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">2. 点击上传框，选择需要上传的文件；</br>或者直接拖动文件到框中；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">3. 填写作文所在工作表，若不知道这是什么，保持默认即可；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">4. 填写作文所在列，若使用模板提交，保持默认即可；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">5. 填入需要评分的作文题目（学生写作文的题目）；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">6.
+                        若无特殊要求，请打开“是否使用默认模板”右侧的开关（即不修改评分标准）；</br>若对评分成绩的区间不满意，最后根据成绩乘以一个倍数即可，强烈不建议修改；</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">7. 点击提交，等待评分结果。</p>
+                    <p style="text-indent: -1em; padding-left: 1em;">8. 请注意，评分时间耗时可能较长，请保持电脑开机状态，在处理结束后会自动下载，请及时保存结果。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="main-page" class="">
+            <div class="notification">
+                <div class="notification-content  main-page-block">
+                    <div class="notification-content">
+                        <a>欢迎使用自动作文评分系统！使用“我的” -- “邀请链接”分享用户使用，每人奖励5元！邀请成功后请<a href="mailto: Muyu.Chen@outlook.com">点此联系管理员</a>，或发邮件给Muyu.Chen@outlook.com。</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="first-row">
+                <div id="" class="place-1-1 main-page-block">
+                    <div>
+                        <a>选择模型</a>
+                    </div>
+                    <div class="buttons">
+                        <button class="uniform-button" id="model-button-1" onclick="selectModel(this)">Qwen-Max</button>
+                        <button class="uniform-button" id="model-button-2"
+                            onclick="selectModel(this)">Qwen-Plus</button>
+                        <button class="uniform-button" id="model-button-3"
+                            onclick="selectModel(this)">Qwen-Turbo</button>
+                    </div>
+                </div>
+
+                <div id="" class="place-1-2 main-page-block">
+                    <div class="upload-title">
+                        <a>上传文件</a>
+                    </div>
+                    <div id="drop-area" class="drop-area" onclick="document.getElementById('fileElem').click()">
+                        <form class="upload">
+                            <p>拖动文件到此处</br></br>或单击选择文件</p>
+                            <input type="file" id="fileElem" multiple accept=".xls,.xlsx,.csv"
+                                onchange="handleFiles(this.files)" style="display:none;">
+
+                        </form>
+                    </div>
+                </div>
+
+                <div id="" class="place-1-3">
+                    <div class="place-1-3-up">
+                        <div style="padding-bottom: 5px;">
+                            <a>选择作文所在工作表; </br>默认值，无需修改</a>
+                        </div>
+                        <input type="text" id="sheet-name" placeholder="1">
+                    </div>
+                    <div class="place-1-3-down">
+                        <div style="padding-bottom: 5px;">
+                            <a>选择作文所在列; </br>模板中列数为B，无需修改</a>
+
+                        </div>
+                        <input type="text" id="col-name" placeholder="B">
+                    </div>
+                </div>
+
+                <div id="" class="place-1-4 main-page-block">
+                    <div style="padding-bottom: 10px">
+                        <a>余额: </a>
+                    </div>
+                    <div class="balance-div">
+                        <a id="balance">loading</a><a style="font-size: 16px;">￥</a>
+                    </div>
+                    <div style="padding: 10px">
+                        <a>充值链接</a>
+                    </div>
+
+                    <div class="balance-div">
+                        <a href="../charge/index.html">充值</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="second-row">
+                <div id="" class="place-2-1 main-page-block">
+                    <div style="padding-bottom: 5px;">
+                        <a>作文题目</a>
+                    </div>
+                    <textarea class="essay" id="essayPrompt" style="margin-top: 5px; min-height: 180px;"
+                        placeholder="作文题目，需要评分的作文写作要求，例如：假如你是李华，你的美术老师带你去公园上了一节美术课，请你写一封信给Chris，告诉他你们在公园里做了什么，你的感受是什么。"></textarea>
+
+                </div>
+
+                <div id="" class="place-2-2 main-page-block">
+                    <div style="padding-bottom: 5px;">
+                        <a>评分标准</a>
+                    </div>
+                    <div style="padding-bottom: 3px;">
+                        <a>是否使用<a href="./defaultCriteria.html">默认</a>模板：</a>
+                        <label class="switch">
+                            <input type="checkbox" id="essay-switch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                        <textarea class="essay" id="switch-check"  style="min-height: 160px;" placeholder="评分标准：“强烈”建议打开开关，使用默认模板。若需要修改，请在默认模板的基础上修改。不要随意自行发挥，否则会造成每一篇的评分标准均不一致。"></textarea>
+
+                </div>
+            </div>
+
+
+            <div class="third-row">
+                <div id="" class="place-3-1 main-page-block">
+                    <div style="padding-bottom: 3px;"><a>是否有待处理文件：</a><a id="isprocessing"></a></div>
+                    <button class="uniform-button" id="submit-button" onclick="">提交</button>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <script src="../config.js"></script>
+        <script src="js/mainpageJS.js"></script>
+        <script src="js/script.js"></script>
+        <script src="js/buttonsChoice.js"></script>
+        <script src="js/afterUpload.js"></script>
+        <script src="js/mainpageUpload.js"></script>
+</body>
+
+</html>

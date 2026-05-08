@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值页面</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="login-page-display-control">
+    <div class="center-align" style="padding-top: 12.5%;">
+        <div id="login-page">
+            <h1>登录</h1>
+            <input type="text" id="username" placeholder="账号">
+            <input type="password" id="password" placeholder="密码">
+            <button onclick="login()">登录</button>
+            <p id="login-error" class="error"></p>
+            <a href="javascript:void(0);" onclick="showRegisterPage()" class="register-link">注册</a> <!-- 注册链接 -->
+        </div>
+    </div></div>
+
+    <!-- 注册页面 -->
+     <div id="register-page-display-control" style="display: none;"> 
+    <div  class="center-align" style="padding-top: 100px; ">
+        <div id="register-page">
+            <h1>注册</h1>
+            <input type="text" id="register-username" placeholder="用户名">
+            <input type="password" id="register-password" placeholder="密码">
+            <input type="password" id="register-confirm-password" placeholder="确认密码">
+            <a><br></a>
+            <button onclick="register()">注册</button>
+            <p id="register-error" class="error"></p>
+            <!-- <button onclick="showLoginPage()">返回登录</button>  返回登录按钮 -->
+        </div>
+    </div>
+</div>
+    
+    <div id="main-page-display-control" style="display: none;">
+        <!-- 现在迁移到mainpage 中了-->
+    </div>
+    <script src="../config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
