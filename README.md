@@ -9,12 +9,10 @@
 </div>  
 
 ## 通知 | notifications
-作者短期内将不再维护此开源代码。后续大部分**服务端的维护**将转为闭源。**Python编写的客户端将继续开源**，但更新时间可能延后于release版本（因为开源时需要整理文件内容）。  
-作者对此项目的期待是可以商业化成功，所以后续使用C#重构的版本将不再开源，但会继续维护Python编写的客户端，保证其拥有基本功能，可以正常使用。Mac用户可以按照下文自行配置使用。
-Release版本将会同时出现C#版本的客户端与Python版本的客户端，C#版本将闭源并且不支持更改服务器地址。  
-感谢12位给我点赞的朋友，我的第一次正式的开源项目得到了大家的肯定。十分感谢。  
-Todo中的商业化功能更新将在闭源的C#中实现。  
-~~但是不得不说，如果几年过后，这个项目商业化失败了……那大家还是有望看见我把他开源出来的……~~
+作者原本计划的商业化分支的功能已经并回开源主仓库了，所以现在这个仓库同时包含了之前计划放在商业化分支的功能。  
+Readme暂未更新，后续会更新。仓库说明和目录结构说明也会在后续更新。
+~~作者短期内将不再维护此开源代码。后续大部分**服务端的维护**将转为闭源。**Python编写的客户端将继续开源**，但更新时间可能延后于release版本，因为开源时需要整理文件内容~~  
+
 
 
 ## 功能特性 | Features
@@ -198,3 +196,131 @@ Finally, run `pyinstaller GUIClient.spec`.
 # 免责声明 | Disclaimer
 `icon.ico` 文件是在 2024 年 10 月 16 日使用阿里巴巴通义千问大模型生成的。作者提供了生成所需的提示信息。该文件的版权遵循该公司规定。  
 The `icon.ico` file was generated using the Qwen large model by Alibaba on October 16, 2024. The author provided the necessary prompts for its creation. The copyright of this file is subject to the company's terms.
+# 重要开源更新  
+1. 之前原本为商业化分支准备的功能已经并回开源主仓库。
+2. 仓库现在同时包含桌面端和网页端，不再只有 Tk 客户端。
+
+## 当前目录结构
+
+```text
+Auto-Essay-Grader/
+├─ client/   # 桌面端（Tk GUI）
+├─ server/   # 后端服务与处理逻辑
+├─ src/      # 配置、用户数据、卡密数据
+├─ web/      # 网页端
+├─ requirements.txt
+└─ README.md
+```
+
+其中：
+
+- `client/GUIClient.py`：桌面端入口
+- `server/server.py`：后端入口
+- `web/client/`：网页主界面
+- `web/charge/`：登录、注册、充值页面
+- `web/config.js`：网页端后端地址配置
+
+## 已合并的功能
+
+当前开源仓库已统一包含这些能力：
+
+- 批量作文评分
+- 用户登录 / 注册
+- 余额与充值逻辑
+- 桌面端客户端
+- 网页端前端
+- 用户资料页与基础账户信息读取
+- 文件上传、异步处理、结果下载链路
+
+## 运行方式
+
+### 1. 配置后端与客户端
+
+项目的主配置文件现在位于：
+
+```text
+src/config.json
+```
+
+桌面端初始化脚本位于：
+
+```bash
+python client/initialize_config.py
+```
+
+### 2. 启动后端
+
+```bash
+python server/server.py
+```
+
+后端默认运行在：
+
+```text
+http://127.0.0.1:5000
+```
+
+### 3. 使用桌面端
+
+```bash
+python client/GUIClient.py
+```
+
+### 4. 使用网页端
+
+网页端代码位于 `web/`。推荐用一个静态文件服务打开，而不是直接双击 HTML。
+
+例如：
+
+```bash
+cd web
+python -m http.server 5500
+```
+
+然后访问：
+
+```text
+http://127.0.0.1:5500/client/index.html
+```
+
+## 网页端配置
+
+网页端不再在脚本里硬编码后端地址，统一通过下面这个文件控制：
+
+```text
+web/config.js
+```
+
+默认配置示例：
+
+```js
+window.AEG_WEB_CONFIG = {
+    backendMode: "local",
+    backends: {
+        local: "http://127.0.0.1:5000",
+        default: "http://127.0.0.1:5000",
+    },
+};
+```
+
+目前支持的思路是：
+
+- `backendMode: "local"`：连接本机后端
+- `backendMode: "default"`：连接默认后端地址
+
+如果后续你有自己的部署地址，可以直接改 `backends.default`。
+
+## 说明
+
+- 用户数据位于 `src/userData.json`
+- 卡密数据位于 `src/cardPIN.json`
+- 处理后的上传文件位于 `server/uploads/`
+- 桌面端与网页端现在共用同一套后端接口
+
+## Todo
+
+- [ ] 启动 `server/server.py` 后自动打开网页端
+- [ ] 继续整理网页端与桌面端的配置项，减少重复配置
+- [ ] 让界面更现代化，继续优化视觉风格和交互细节
+- [ ] 完善网页端帮助页、异常提示和处理进度体验
+- [ ] 补充更稳定的部署说明和打包说明

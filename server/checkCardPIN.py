@@ -1,19 +1,22 @@
 import json
 import random
 import string
-
+from os import path
 ### IMPORTANT ###
 # DO NOT SHARE THIS `CHARSET` WITH ANYONE
 # you need to fill this with 36 characters in random order
 # you cannot repeat characters
 # this is the key for encoding and decoding the UID
 # so make sure you don't lose it and don't share it.
-SHUFFLED_CHARSET = "1234567890abcdefghijklmnopqrstuvwxyz"
+SHUFFLED_CHARSET = "q3w8e4r2t7y1u6i9o0pazxscvbnmlkjhgfd5"
 # the string before the UID is used to determine the validity of the UID
 # also for the security of the card PIN, you can change it
-opt0Str = "1234"
-opt1Str = "2234"
-opt2Str = "3234"
+opt0Str = "3408"
+opt1Str = "8196"
+opt2Str = "5072"
+
+BASE_DIR = path.dirname(path.abspath(__file__))
+cardPINFile = path.join(BASE_DIR, "..", "src", "cardPIN.json")
 
 def custom_encode_uid(uid):
     # Custom compact encoding: Encode a 12-digit number into an 8-character string using a shuffled base-36 encoding
@@ -132,7 +135,7 @@ def checkCardPINFunc(cardPIN):
     print(f"Parsed price: {parsed_price}")
     value2 = -1
     # check if the card PIN is in the database
-    with open("cardPIN.json", "r") as f:
+    with open(cardPINFile, "r", encoding="utf-8") as f:
         data = json.load(f)
     dataPrice = data.get(str(parsed_price))  
     # Assume price_level is the price level you determined earlier

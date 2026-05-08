@@ -2,3 +2,6 @@ __pycache__/language.cpython-311.pyc
 __pycache__/modifyUsers.cpython-311.pyc
 __pycache__/checkCardPIN.cpython-311.pyc
 test.py
+client/__pycache__/
+server/__pycache__/
+server/uploads/

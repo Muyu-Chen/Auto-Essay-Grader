@@ -1,9 +1,26 @@
 import json
 from datetime import datetime
 import hashlib
+from os import path
+import threading
 
-with open("userData.json", "r", encoding="utf-8") as file:
+DEBUG_MODEL = False
+
+BASE_DIR = path.dirname(path.abspath(__file__))
+userDataFile = path.join(BASE_DIR, "..", "src", "userData.json")
+with open(userDataFile, "r", encoding="utf-8") as file:
     userData = json.load(file)
+
+DEFAULT_USER_FIELDS = {
+    "phoneNumber": "",
+    "email": "",
+    "personalBio": "",
+    "priceLevel": 100,
+    "referredByUID": "0",
+    "version": "",
+    "lastLoginTime": "",
+    "isProcessing": "false",
+}
 # userData =
 #   {
 #       "UID": "12900001",
@@ -29,19 +46,51 @@ with open("userData.json", "r", encoding="utf-8") as file:
 
 # interface begin at here
 def modifyUserFunc(dataFromWeb):
+
     todo = dataFromWeb.get("todo")
+    filed = dataFromWeb.get("field")
+    if DEBUG_MODEL:
+        print("Now is in modifyUserFunc")
+        print("todo: " + str(todo) + "; field: " + str(filed))
     # "todo" means the operation that the user wants to do
 
     if todo == None:
-        return -1
+        raise Exception("没有操作“todo”，请检查输入")
 
     # because addUser do not need UID,
     # so we do not need to check UID here
-    elif todo == "addUser":
+    if todo == "addUser":
         return addUserFunc(dataFromWeb)
-    elif todo == "updateUser":
-        updateUserFunc(dataFromWeb)
-        return 0
+
+    # if UID is none but userAccount is not none,
+    # we can get UID by userAccount
+    UID = dataFromWeb.get("UID")
+    if UID == None or UID == "" or UID == "None":
+        userAccount = dataFromWeb.get("userAccount")
+        if DEBUG_MODEL:
+            print("userAccount: " + str(userAccount))
+        if userAccount == None or userAccount == "":
+            raise Exception("没有输入userAccount，请检查输入")
+        else:
+            UID = str(getUserInfoByAccount(userAccount))
+            if UID == None or UID == "" or UID == "None":
+                raise Exception("no such user")
+            else:
+                print("UID: " + str(UID))
+                dataFromWeb["UID"] = UID
+
+    # interface
+
+    if todo == "updateUser":
+        # dataFromWeb:
+        # UID = dataFromWeb.get("UID")
+        # field = dataFromWeb.get("field")
+        # newValue = dataFromWeb.get("newValue")
+        return updateUserFunc(dataFromWeb)
+
+    elif todo == "rechargeAccount":
+        # -1: negative balance; other number: balance
+        return rechargeAccount(dataFromWeb)
     elif todo == "findUserField":
         return findUserFunc(dataFromWeb)
     elif todo == "rechargeAccount":
@@ -55,52 +104,20 @@ def modifyUserFunc(dataFromWeb):
     elif todo == "updateCurrentBalance":
         return updateCurrentBalance(dataFromWeb)
     elif todo == "isVerified":
+        print("Now is before isVerified")
         return isVerified(dataFromWeb)
     elif todo == "generateUserTempToken":
         return generateUserTempToken(dataFromWeb)
-    # if UID is none but userAccount is not none,
-    # we can get UID by userAccount
-    UID = dataFromWeb.get("UID")
-    if UID == None:
-        userAccount = dataFromWeb.get("userAccount")
-        if userAccount == None or userAccount == "":
-            return -1
-        else:
-            UID = str(getUserInfoByAccount(userAccount))
-            if UID == None:
-                return -1
-            else:
-                dataFromWeb["UID"] = UID
-
-    # interface
-    elif todo == "updateUser":
-        updateUserFunc(dataFromWeb)
-        return 0
-    elif todo == "findUser":
-        return findUserFunc(dataFromWeb)
-    elif todo == "rechargeAccount":
-        # -1: negative balance; other number: balance
-        return rechargeAccount(dataFromWeb)
-    elif todo == "addUsage":
-        # -1: negative balance; other number: balance
-        # this would not get from web, but from the server
-        # but we will use the same data structure
-        return addUsage(dataFromWeb)
-    elif todo == "updateCurrentBalance":
-        updateCurrentBalance(dataFromWeb)
-        return 0
-    elif todo == "isVerified":
-        isVerified(dataFromWeb)
-        return 0
     else:
-        return -1
+        print("No such operation" + str(todo))
+        raise Exception("没有对应操作：" + str(todo))
 
 
 ###
 # second level interfaces
 def addUserFunc(dataFromWeb):
     print("Now is in addUserFunc")
-    return createUser(dataFromWeb)
+    return createUser(dataFromWeb, 5) # 5 is the initial deposit
 
 
 def updateUserFunc(dataFromWeb):
@@ -112,26 +129,34 @@ def updateUserFunc(dataFromWeb):
         setUserInfo(UID, field, newValue)
     except UserNotFoundException as e:
         print(e)  # Print user not found error message
-        return "eroor: no such user"
+        # "eroor: no such user"
+        return 401
     except FieldNotFoundException as e:
         print(e)  # Print field not found error message
-        return "error: no such field"
+        # "error: no such field"
+        return 402
+    return 200
 
 
 def findUserFunc(dataFromWeb):
-    print("Now is in findUserFunc")
+    if DEBUG_MODEL:
+        print("Now is in findUserFunc")
     UID = dataFromWeb.get("UID")
-    if UID == None:
+    if UID == None or UID == "" or UID == "None":
         userAccount = dataFromWeb.get("userAccount")
         if userAccount == None or userAccount == "":
-            return None
+            raise Exception("没有输入userAccount，请检查输入")
         else:
             UID = str(getUserInfoByAccount(userAccount))
             # if UID is None, means the user is not found
     field = dataFromWeb.get("field")
-    print(f"UID: {UID}, field: {field}")
+    if field == None or field == "" or field == "None":
+        raise Exception("没有输入field，请检查输入")
+    if DEBUG_MODEL:
+        print(f"UID: {UID}, field: {field}")
     userInfo = getUserInfo(UID, field)
-    print(f"userInfo: {userInfo}")
+    if DEBUG_MODEL:
+        print(f"userInfo: {userInfo}")
     return userInfo
 
 
@@ -148,14 +173,19 @@ def createUser(dataFromWeb, deposit=0):
     print("Now is in addUserFunction")
     userName = dataFromWeb.get("userName")
     userAccount = dataFromWeb.get("userAccount")
+    if userName == None or userName == "" or userName == "None":
+        userName = userAccount
     userPassword = dataFromWeb.get("userPassword")
+    referredByUID = dataFromWeb.get("referredByUID")
+    # todo: 通过邀请链接来获得priceLevel
+    priceLevel = 100
     current_time = datetime.now()
     creating_date = current_time.strftime("%Y%m%d")  # "20241217"
     creating_time = current_time.strftime("%H%M%S")  # "120821"
     userHashedPassword = hashPassword(userPassword, creating_date, creating_time)
     # find the largest UID
     max_uid = 0
-    with open("userData.json", "r", encoding="utf-8") as file:
+    with open(userDataFile, "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
     for user in userDataNow["users"]:
         try:
@@ -167,15 +197,23 @@ def createUser(dataFromWeb, deposit=0):
         "UID": new_uid,
         "userName": userName,
         "userAccount": userAccount,
+        "phoneNumber": "",
+        "email": "",
+        "personalBio": "",
         "userPassword": userHashedPassword,
         "creatingDate": creating_date,
         "creatingTime": creating_time,
+        "priceLevel": priceLevel,
+        "referredByUID": str(referredByUID),
+        "version": "",
+        "lastLoginTime": "",
         "totalDeposit": int(deposit),
         "totalUsed": 0,
         "currentBalance": int(deposit),
     }
     userDataNow["users"].append(new_user)
-    with open("userData.json", "w", encoding="utf-8") as file:
+    # write the new user: 写入
+    with open(userDataFile, "w", encoding="utf-8") as file:
         json.dump(userDataNow, file, ensure_ascii=False, indent=4)
 
     # Note: Printing passwords is a security risk!!!
@@ -187,9 +225,28 @@ def createUser(dataFromWeb, deposit=0):
     return new_user
 
 
+def ensure_user_defaults(uid):
+    with open(userDataFile, "r", encoding="utf-8") as file:
+        user_data_now = json.load(file)
+
+    has_changes = False
+    for user in user_data_now["users"]:
+        if user["UID"] != uid:
+            continue
+        for field, default_value in DEFAULT_USER_FIELDS.items():
+            if field not in user:
+                user[field] = default_value
+                has_changes = True
+        break
+
+    if has_changes:
+        with open(userDataFile, "w", encoding="utf-8") as file:
+            json.dump(user_data_now, file, ensure_ascii=False, indent=4)
+
+
 def rechargeAccount(data):
     UID = str(data.get("UID"))
-    if UID == None or UID == "":
+    if UID == None or UID == "" or UID == "None":
         UID = str(getUserInfoByAccount(data.get("userAccount")))
     addNum = data.get("addNum")
     print(f"UID: {UID}, addNum: {addNum}")
@@ -211,12 +268,12 @@ def rechargeAccount(data):
 
 def addUsage(data):
     UID = data.get("UID")
-    if UID == None or UID == "":
+    if UID == None or UID == "" or UID == "None":
         UID = str(getUserInfoByAccount(data.get("userAccount")))
     addNum = data.get("addNum")
     totalUsed = getUserInfo(UID, "totalUsed")
     print("totalUsed: " + str(totalUsed))
-    if UID == None or UID == "":
+    if UID == None or UID == "" or UID == "None":
         UID = str(getUserInfoByAccount(data.get("userAccount")))
     if isVerified(data) == False:
         return -1
@@ -228,6 +285,7 @@ def addUsage(data):
     else:
         return remaining
 
+
 def updateCurrentBalance(UID):
     UID = str(UID)
     totalUsed = getUserInfo(UID, "totalUsed")
@@ -238,7 +296,7 @@ def updateCurrentBalance(UID):
 
 
 def getUserInfoByAccount(userAccount):
-    with open("userData.json", "r", encoding="utf-8") as file:
+    with open(userDataFile, "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
     for user in userDataNow["users"]:
         if str(user["userAccount"]) == str(userAccount):
@@ -258,6 +316,7 @@ def isVerified(dataFromWeb):
         if UID == None or UID == "" or UID == "None":
             print("no such user")
             raise Exception("no such user")
+    ensure_user_defaults(UID)
     userPassword = dataFromWeb.get("userPassword")
 
     # 更新用户正在使用的版本号和最新登录时间
@@ -309,9 +368,9 @@ def isVerified(dataFromWeb):
 
 # 返回根据 UID 查找的指定字段值
 def getUserInfo(UID, field):
-    with open("userData.json", "r", encoding="utf-8") as file:
+    with open(userDataFile, "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
-    if field is None or field == "":
+    if field is None or field == "" or field == "None":
         return None
     # 遍历 users 数组
     for user in userDataNow["users"]:
@@ -350,7 +409,7 @@ def hashPassword(password, creating_date, creating_time):
 
 # 根据 UID 更新指定字段
 def setUserInfo(uid, field, newValue):
-    with open("userData.json", "r", encoding="utf-8") as file:
+    with open(userDataFile, "r", encoding="utf-8") as file:
         userDataNow = json.load(file)
     for user in userDataNow["users"]:
         if user["UID"] == uid:
@@ -361,10 +420,13 @@ def setUserInfo(uid, field, newValue):
             if field in user:
                 user[field] = newValue  # update the field
                 print(f"Field {field} updated successfully!" f" New value: {newValue}")
-                with open("userData.json", "w") as f:
-                    print("write to file")
-                    json.dump(userDataNow, f, ensure_ascii=False, indent=4)
-                    print("write to file done")
+                # update new field: 写入
+                file_lock = threading.Lock()
+                with file_lock:
+                    with open(userDataFile, "w", encoding="utf-8") as f:
+                        print("write to file")
+                        json.dump(userDataNow, f, ensure_ascii=False, indent=4)
+                        print("write to file done")
                 return user  # return the updated user information
             else:
                 raise FieldNotFoundException(
@@ -378,37 +440,12 @@ def setUserInfo(uid, field, newValue):
 def generateUserTempToken(dataFromWeb):
     userAccount = dataFromWeb.get("userAccount")
     experitedTime = dataFromWeb.get("experitedTime")  # hours
-    if experitedTime == None or experitedTime == "":
+    if experitedTime == None or experitedTime == "" or experitedTime == "None":
         experitedTime = 14 * 24  # 14 days
-    if userAccount == None or userAccount == "":
+    if userAccount == None or userAccount == "" or userAccount == "None":
         UID = dataFromWeb.get("UID")
-        if UID == None:
+        if UID == None or UID == "" or UID == "None":
             return -1
     userAccount = getUserInfo(UID, "userAccount")
     createTime = datetime.now().strftime("%Y%m%d%H%M%S")
     return hashPassword(userAccount, createTime, experitedTime)
-
-
-######################################################
-# test:
-# 测试：'12900001' userName 和 totalUsed
-# uid_to_update = "12900001"
-# field_to_update_1 = "userName"  # 更新 userName
-# new_value_1 = "MuYYY_Updated"  # 新的 userName 值
-
-# field_to_update_2 = "totalUsed"  # 更新 totalUsed
-# new_value_2 = 150  # 新的 totalUsed 值
-
-# try:
-# 更新 userName
-# updated_user_1 = setUserInfo(uid_to_update, field_to_update_1, new_value_1)
-# print(f"更新后的用户信息 (userName): {updated_user_1}")
-
-# 更新 totalUsed
-# updated_user_2 = setUserInfo(uid_to_update, field_to_update_2, new_value_2)
-# print(f"更新后的用户信息 (totalUsed): {updated_user_2}")
-
-# except UserNotFoundException as e:
-#    print(e)  # 打印用户未找到的错误信息
-# except FieldNotFoundException as e:
-#    print(e)  # 打印字段未找到的错误信息

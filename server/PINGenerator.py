@@ -1,6 +1,5 @@
 from checkCardPIN import generateCardPINFunc, parse_card_key
 import json
-
 # Generate a card PIN
 # option = 0: only this UID is valid
 # option = 1: the PIN for all UIDs are valid
@@ -19,18 +18,17 @@ elif option == 1:
 elif option == 2:
     optionContent = "the PIN for all UIDs are valid, you can add other usage scenarios"
 
-
 def genMuti(a):
     print("---------------------------")
-    print("the number of cardPIN: " + str(a))
+    print("生成卡密数量: " + str(a))
     cardPIN = []
     for i in range(a):
-        # generate
+        # 生成卡密
         cardPINtemp = generateCardPINFunc(priceLevel, uid, option)
         cardPIN.append(cardPINtemp[1])
         # print("copy this to the cardPIN.json: " + str(cardPINtemp[1]))
 
-        # check the generated cardPIN
+        # 解密卡密，确保正确
         parsed_uid, parsed_price = parse_card_key(cardPINtemp[1])
         print("parsed uid:", parsed_uid, "price:", parsed_price)
         print("-----------")
@@ -45,10 +43,9 @@ def genMuti(a):
         .replace(" ", "")
     )
     print("---------------------------")
-    print("the price: " + str(priceLevel))
-    print("the cardPIN option：" + str(optionContent))
-    print("copy this to cardPIN.json: \n--------\n" + cardPIN)
+    print("本次生成的卡密价格: " + str(priceLevel))
+    print("本次生成的卡密option：" + str(optionContent))
+    print("复制到cardPIN.json: \n--------\n" + cardPIN)
 
-
-# change this number to generate more cardPIN
+# 需要生成的数量
 genMuti(10)
